@@ -9,9 +9,22 @@ const server = http.createServer((req,res) => {
     case '/about':
       res.end('about page');
       break;
+    case '/test':
+      res.end('test');
+      break; 
     default:
-      res.statusCode = 404;
-      res.end('Not found');
+      const powUrl = '/powoftwo/';
+      if ( req.url.indexOf(powUrl) !== -1 ) {
+        const num = parseInt(req.url.split(powUrl)[1]);
+        if ( !Number.isNaN(num) ) {
+          res.end(String(Math.pow(num,2)));
+        } else {
+          res.statusCode = 400;
+          res.end('Bad request');
+        }
+      } else {
+        res.end('error 404');
+      }
   }
 });
 server.listen(port, () => {
