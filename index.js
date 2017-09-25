@@ -4,6 +4,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const fsUtils = require('./libs/fsUtils');
 const bankUtils = require('./libs/bankUtils');
+const AppError = require('./libs/AppError');
 
 const CARDS_FILE_PATH = './source/cards.json';
 
@@ -44,15 +45,11 @@ app.post('/cards', (req, res, next) => {
 	let { cardNumber, balance } = req.body;
 	balance = Number(balance);
 	if (!bankUtils.isDataValid(cardNumber, balance)) {
-		const err = new Error('Bad request: Card data is invalid');
-		err.status = 400;
-		throw err;
+		throw new AppError(400, 'Bad request: Card data is invalid');
 	}
 
 	if (!bankUtils.isLuhnValid(cardNumber)) {
-		const err = new Error('Bad request: Card number is invalid');
-		err.status = 400;
-		throw err;
+		throw new AppError(400, 'Bad request: Card number is invalid');
 	}
 
 	fsUtils.readFile(CARDS_FILE_PATH)
@@ -60,9 +57,7 @@ app.post('/cards', (req, res, next) => {
 		.then((cards) => {
 			const cardIndex = cards.findIndex(card => card.cardNumber === cardNumber);
 			if (cardIndex !== -1) {
-				const err = new Error('Bad request: Duplicate card number');
-				err.status = 400;
-				throw err;
+				throw new AppError(400, 'Bad request: Duplicate card number');
 			} else {
 				cards.push({ cardNumber, balance });
 				return cards;
@@ -77,18 +72,14 @@ app.post('/cards', (req, res, next) => {
 app.delete('/cards/:id', (req, res, next) => {
 	const id = Number(req.params.id);
 	if (!Number.isInteger(id)) {
-		const err = new Error('Bad request: Id must be an integer');
-		err.status = 400;
-		throw err;
+		throw new AppError(400, 'Bad request: Id must be an integer');
 	}
 
 	fsUtils.readFile(CARDS_FILE_PATH)
 		.then(JSON.parse)
 		.then((cards) => {
 			if (cards.length <= id)	{
-				const err = new Error('Not found: Card wasn\'t found by id');
-				err.status = 404;
-				throw err;
+				throw new AppError(404, 'Not found: Card wasn\'t found by id');
 			} else {
 				cards.splice(id, 1);
 				return cards;
@@ -101,7 +92,7 @@ app.delete('/cards/:id', (req, res, next) => {
 });
 
 app.get('/error', (req, res) => {
-	throw new Error('Oops!');
+	throw new AppError(403, 'Oops!');
 });
 
 app.get('/transfer', (req, res) => {
@@ -123,7 +114,8 @@ app.use((err, req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
-	res.status(500).send(err.message);
+	console.log(err);
+	res.sendStatus(500);
 });
 
 app.listen(3000, () => {
