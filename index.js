@@ -79,7 +79,7 @@ app.delete('/cards/:id', (req, res, next) => {
 		.then(JSON.parse)
 		.then((cards) => {
 			if (cards.length <= id)	{
-				throw new AppError(404, 'Not found: Card wasn\'t found by id');
+				throw new AppError(404, `Not found: Card wasn\'t found by id ${id}`);
 			} else {
 				cards.splice(id, 1);
 				return cards;
