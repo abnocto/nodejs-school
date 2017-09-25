@@ -15,6 +15,7 @@ describe('DELETE /cards: invalid paths', () => {
 		'/a',
 		'/b',
 		'/abc',
+		'/-10',
 	];
 
 	paths.forEach((path, index) => {
@@ -23,6 +24,26 @@ describe('DELETE /cards: invalid paths', () => {
 				.delete(`/cards${path}`)
 				.end((err, res) => {
 					res.should.have.status(400);
+					done();
+				});
+		});
+	});
+
+});
+
+describe('DELETE /cards: can\'t find by id', () => {
+
+	const paths = [
+		'/1000000',
+		'/99999999',
+	];
+
+	paths.forEach((path, index) => {
+		it(`test#${index + 1}`, (done) => {
+			chai.request(app)
+				.delete(`/cards${path}`)
+				.end((err, res) => {
+					res.should.have.status(404);
 					done();
 				});
 		});

@@ -71,7 +71,7 @@ app.post('/cards', (req, res, next) => {
 
 app.delete('/cards/:id', (req, res, next) => {
 	const id = Number(req.params.id);
-	if (!Number.isInteger(id)) {
+	if (!Number.isInteger(id) || id < 0) {
 		throw new AppError(400, 'Bad request: Id must be an integer');
 	}
 
