@@ -3,6 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 
+const AppError = require('../../../libs/appError');
 const Model = require('./model');
 
 class FileModel extends Model {
@@ -19,6 +20,43 @@ class FileModel extends Model {
 	 */
 	async getAll() {
 		return await this.readFile();
+	}
+
+	/**
+	 * Returns file object by id
+	 * @param {Number} id Object id
+	 * @returns {Promise.<Object>}
+	 */
+	async get(id) {
+		if (!Number.isInteger(id) || id <= 0) {
+			throw new AppError(400, 'Bad request: Id must be a positive integer');
+		}
+
+		const obj = this._dataSource.find(_obj => _obj.id === id);
+		if (obj) {
+			return obj;
+		}
+
+		throw new AppError(404, `Not found: Wasn't found by id ${id}`);
+	}
+
+	/**
+	 * Removes file object by id
+	 * @param {Number} id Object id
+	 * @returns {Promise.<void>}
+	 */
+	async remove(id) {
+		if (!Number.isInteger(id) || id <= 0) {
+			throw new AppError(400, 'Bad request: Id must be a positive integer');
+		}
+
+		const objIndex = this._dataSource.findIndex(_obj => _obj.id === id);
+		if (objIndex === -1) {
+			throw new AppError(404, `Not found: Wasn't found by id ${id}`);
+		}
+
+		this._dataSource.splice(objIndex, 1);
+		await this._writeFile();
 	}
 
 	/**

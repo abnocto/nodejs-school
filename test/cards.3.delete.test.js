@@ -48,7 +48,7 @@ describe('DELETE /cards: can\'t find by id', () => {
 				.end((err, res) => {
 					res.should.have.status(404);
 					res.text.should.be.a('string');
-					res.text.should.eql(`Not found: Card wasn't found by id ${Number(path.slice(1))}`);
+					res.text.should.eql(`Not found: Wasn't found by id ${Number(path.slice(1))}`);
 					done();
 				});
 		});
