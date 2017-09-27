@@ -4,8 +4,8 @@
   "description": "Приложение школы Node.js «Кошелёк»",
   "author": "",
   "scripts": {
-    "start": "node index.js",
-    "start-demon": "nodemon index.js",
+    "start": "node source/app.js",
+    "start-demon": "nodemon source/app.js",
     "test": "mocha"
   },
   "repository": {

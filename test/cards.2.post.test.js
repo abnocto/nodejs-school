@@ -5,14 +5,13 @@ process.env.NODE_ENV = 'test';
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const should = chai.should();
-const app = require('../index');
-const fsUtils = require('../libs/fsUtils');
 
-const CARDS_FILE_PATH = './source/cards.json';
+const app = require('../source/app');
+const CardsModel = require('../source/models/cards');
 
 chai.use(chaiHttp);
 
-fsUtils.writeFile(CARDS_FILE_PATH, '[]')
+new CardsModel().removeAll()
 	.then(ok => {
 
 		describe('POST /cards: invalid data', () => {
@@ -92,6 +91,7 @@ fsUtils.writeFile(CARDS_FILE_PATH, '[]')
 						.end((err, res) => {
 							res.should.have.status(200);
 							res.body.should.be.a('object');
+							res.body.should.have.property('id');
 							res.body.should.have.property('cardNumber');
 							res.body.should.have.property('balance');
 							done();
