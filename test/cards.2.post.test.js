@@ -7,7 +7,7 @@ const chaiHttp = require('chai-http');
 const should = chai.should();
 
 const app = require('../source/app');
-const CardsModel = require('../source/models/cards');
+const CardsModel = require('../source/models/cardsModel');
 
 chai.use(chaiHttp);
 
@@ -90,7 +90,7 @@ chai.use(chaiHttp);
 					.post('/cards')
 					.send(card)
 					.end((err, res) => {
-						res.should.have.status(200);
+						res.should.have.status(201);
 						res.body.should.be.a('object');
 						res.body.should.have.property('id');
 						res.body.should.have.property('cardNumber');

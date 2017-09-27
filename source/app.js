@@ -1,44 +1,57 @@
 'use strict';
 
-const express = require('express');
-const bodyParser = require('body-parser');
+const Koa = require('koa');
+const serve = require('koa-static');
+const bodyParser = require('koa-bodyparser');
 
-const getAllCardsController = require('./controllers/get-all-cards');
-const createCardController = require('./controllers/create-card');
-const removeCardController = require('./controllers/remove-card');
-const errorController = require('./controllers/error');
+const router = require('./router');
 
-const app = express();
+const CardsModel = require('./models/cardsModel');
 
-app.use(express.static('public'));
+const AppError = require('../libs/appError');
 
-app.use(bodyParser.json());
+const app = new Koa();
 
-app.use((req, res, next) => {
-	app.set('start', Date.now());
-	next();
+//logger
+app.use(async (ctx, next) => {
+	const start = Date.now();
+	await next();
+	const time = Date.now() - start;
+	console.log(`Request log: ${ctx.method} ${ctx.path} ${ctx.status} ${ctx.state.isError ? `'Error: ${ctx.body}'` : ''} ${time} ms`);
 });
 
-app.get('/cards', getAllCardsController);
-app.post('/cards', createCardController);
-app.delete('/cards/:id', removeCardController);
-
-app.all('/error', errorController);
-
-app.use((err, req, res, next) => {
-	console.log(err);
-	res.sendStatus(500);
-	next();
+//error handler
+app.use(async (ctx, next) => {
+	try {
+		await next();
+	} catch(err) {
+		if (err instanceof AppError) {
+			ctx.status = err.status;
+		} else {
+			ctx.status = 500;
+			console.log(`Server error: ${err.message}`);
+		}
+		ctx.body = err.message;
+		ctx.state.isError = true;
+	}
 });
 
-app.use((req, res, next) => {
-	app.set('finish', Date.now());
-	console.log(app.get('finish') - app.get('start'));
-	next();
+//add model as context prop
+app.use(async (ctx, next) => {
+	ctx.CardsModel = new CardsModel();
+	await ctx.CardsModel.readFile();
+	await next();
 });
 
-app.listen(3000, () => {
+//bodyParser
+app.use(bodyParser());
+
+//router
+app.use(router.routes());
+
+//serve static
+app.use(serve('./public'));
+
+module.exports = app.listen(3000, () => {
 	console.log('YM Node School App listening on port 3000!');
 });
-
-module.exports = app;

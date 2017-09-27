@@ -71,34 +71,8 @@ const bankUtils = {
 			}
 		}
 		return formattedCardNumber.join('');
-	},
+	}
 
-	/**
-	 * Validates card data from client
-	 * @param {String} cardNumber
-	 * @param {Number} balance
-	 * @returns {Boolean} validation flag
-	 */
-	isDataValid(cardNumber, balance) {
-		return typeof cardNumber === 'string'
-			&& cardNumber.length === 16
-			&& Number.isInteger(balance);
-	},
-
-	/**
-	 * Check is card number valid with Luhn algorithm
-	 * @param {String} cardNumber card number
-	 * @returns {Boolean} validation flag
-	 */
-	isLuhnValid(cardNumber) {
-		const sum = cardNumber.split('').reduce((s, elem, index) => {
-			let val = Number(elem);
-			if (index % 2 === 0) val *= 2;
-			if (val > 9) val -= 9;
-			return s + val;
-		}, 0);
-		return sum % 10 === 0;
-	},
 };
 
 module.exports = bankUtils;
