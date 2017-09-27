@@ -2,12 +2,17 @@
 
 const Cards = require('../models/cards');
 
-function createCard(req, res) {
-	const cards = new Cards();
-	const card = req.body;
-	cards.create(card)
-		.then(card => res.json(card))
-		.catch(err => res.status(err.status || 500).send(err.message));
+async function createCard(req, res, next) {
+	try {
+		const cardsModel = new Cards();
+		const reqCard = req.body;
+		const resCard = await cardsModel.create(reqCard);
+		res.json(resCard);
+	} catch(err) {
+		res.status(err.status || 500).send(err.message);
+	} finally {
+		next();
+	}
 }
 
 module.exports = createCard;

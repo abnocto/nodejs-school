@@ -1,1 +1,1 @@
-[{"cardNumber":"4111111111111111","balance":12345,"id":1},{"cardNumber":"5106216010173049","balance":15000,"id":2},{"cardNumber":"5106216010126757","balance":700,"id":3},{"cardNumber":"4561261212345467","balance":0,"id":4}]
+[{"id":1,"cardNumber":"4111111111111111","balance":12345},{"id":2,"cardNumber":"5106216010173049","balance":15000},{"id":3,"cardNumber":"5106216010126757","balance":700},{"id":4,"cardNumber":"4561261212345467","balance":0}]
