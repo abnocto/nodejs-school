@@ -41,6 +41,24 @@ class FileModel extends Model {
 	}
 
 	/**
+	 * Returns file objects by Foreign key (property name and id)
+	 * @param {String} name Property name
+	 * @param {Number} id Foreign key (id)
+	 * @returns {Promise.<Array>}
+	 */
+	async getBy(name, id) {
+		if (typeof name !== 'string') {
+			throw new AppError(400, 'Bad request: Name must be a string');
+		}
+
+		if (!Number.isInteger(id) || id <= 0) {
+			throw new AppError(400, 'Bad request: Id must be a positive integer');
+		}
+
+		return this._dataSource.filter(_obj => _obj[name] === id);
+	}
+
+	/**
 	 * Removes file object by id
 	 * @param {Number} id Object id
 	 * @returns {Promise.<void>}
@@ -56,15 +74,6 @@ class FileModel extends Model {
 		}
 
 		this._dataSource.splice(objIndex, 1);
-		await this._writeFile();
-	}
-
-	/**
-	 * Removes all objects from file
-	 * @returns {Promise.<void>}
-	 */
-	async removeAll() {
-		this._dataSource = [];
 		await this._writeFile();
 	}
 

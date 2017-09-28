@@ -9,11 +9,19 @@ class Model {
 	async getAll() {}
 
 	/**
-	 * Returns object by id
-	 * @param {Number} id Object id
-	 * @returns {Object}
+	 * Returns object by Primary key (id)
+	 * @param {Number} id Primary key (id)
+	 * @returns {Promise}
 	 */
 	async get(id) {}
+
+	/**
+	 * Returns objects by Foreign key (property name and id)
+	 * @param {String} name Property name
+	 * @param {Number} id Foreign key (id)
+	 * @returns {Promise}
+	 */
+	async getBy(name, id) {}
 
 	/**
 	 * Creates new object by data
@@ -28,12 +36,6 @@ class Model {
 	 * @returns {Promise}
 	 */
 	async remove(id) {}
-
-	/**
-	 * Removes all objects
-	 * @returns {Promise}
-	 */
-	async removeAll() {}
 
 }
 

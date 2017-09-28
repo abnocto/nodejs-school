@@ -13,8 +13,28 @@ chai.use(chaiHttp);
 
 (async () => {
 
-	await new CardsModel().removeAll();
+	//get
+	describe('GET /cards', () => {
 
+		it('test#1', (done) => {
+			chai.request(app)
+				.get('/cards')
+				.end((err, res) => {
+					res.should.have.status(200);
+					console.log(res.body)
+					res.body.should.be.a('array');
+					done();
+				});
+		});
+
+	});
+
+	//reset
+	const cardsModel = new CardsModel();
+	cardsModel._dataSource = [];
+	await cardsModel._writeFile();
+
+	//create
 	describe('POST /cards: invalid data', () => {
 
 		const cards = [
@@ -121,6 +141,53 @@ chai.use(chaiHttp);
 						res.should.have.status(400);
 						res.text.should.be.a('string');
 						res.text.should.eql('Bad request: Duplicate card number');
+						done();
+					});
+			});
+		});
+
+	});
+
+	//remove
+	describe('DELETE /cards: invalid paths', () => {
+
+		const paths = [
+			'/a',
+			'/b',
+			'/abc',
+			'/-10',
+		];
+
+		paths.forEach((path, index) => {
+			it(`test#${index + 1}`, (done) => {
+				chai.request(app)
+					.delete(`/cards${path}`)
+					.end((err, res) => {
+						res.should.have.status(400);
+						res.text.should.be.a('string');
+						res.text.should.eql('Bad request: Id must be a positive integer');
+						done();
+					});
+			});
+		});
+
+	});
+
+	describe('DELETE /cards: can\'t find by id', () => {
+
+		const paths = [
+			'/1000000',
+			'/99999999',
+		];
+
+		paths.forEach((path, index) => {
+			it(`test#${index + 1}`, (done) => {
+				chai.request(app)
+					.delete(`/cards${path}`)
+					.end((err, res) => {
+						res.should.have.status(404);
+						res.text.should.be.a('string');
+						res.text.should.eql(`Not found: Wasn't found by id ${Number(path.slice(1))}`);
 						done();
 					});
 			});

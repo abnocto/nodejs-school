@@ -16,8 +16,8 @@ class CardsModel extends FileModel {
 	 */
 	async create(data) {
 		const card = {
-			id : Math.max(...Object.values(this._dataSource).map(card => card.id)) + 1,
-			cardNumber : data.cardNumber,
+			...data,
+			id : Math.max(...Object.values(this._dataSource).map(_card => _card.id)) + 1,
 			balance : Number(data.balance)
 		};
 
@@ -45,9 +45,10 @@ class CardsModel extends FileModel {
 	 * @returns {Boolean} validation flag
 	 */
 	_isDataValid(card) {
-		return typeof card.cardNumber === 'string'
-			&& card.cardNumber.length === 16
-			&& Number.isInteger(card.balance);
+		if (!card) return false;
+		const { cardNumber, balance } = card;
+		return typeof cardNumber === 'string' && cardNumber.length === 16
+			&& Number.isInteger(balance);
 	}
 
 	/**
