@@ -1,5 +1,3 @@
-'use strict';
-
 module.exports = async () => {
-	throw new Error('Oops!');
+  throw new Error('Oops!');
 };

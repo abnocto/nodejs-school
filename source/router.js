@@ -1,5 +1,3 @@
-'use strict';
-
 const router = require('koa-router')();
 
 const getAllCardsController = require('./controllers/cards/get-all');
