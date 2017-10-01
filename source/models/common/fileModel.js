@@ -1,7 +1,6 @@
 const fs = require('fs');
 const path = require('path');
 
-const AppError = require('../../../libs/appError');
 const Model = require('./model');
 
 class FileModel extends Model {
@@ -16,7 +15,7 @@ class FileModel extends Model {
    * @returns {Promise.<Array>}
    */
   async getAll() {
-    return await this.readFile();
+    return await this._readFile();
   }
 
   /**
@@ -25,16 +24,8 @@ class FileModel extends Model {
    * @returns {Promise.<Object>}
    */
   async get(id) {
-    if (!Number.isInteger(id) || id <= 0) {
-      throw new AppError(400, 'Bad request: Id must be a positive integer');
-    }
-
-    const obj = this._dataSource.find(_obj => _obj.id === id);
-    if (obj) {
-      return obj;
-    }
-
-    throw new AppError(404, `Not found: Wasn't found by id ${id}`);
+    const objects = await this._readFile();
+    return objects.find(_object => _object.id === id);
   }
 
   /**
@@ -44,15 +35,8 @@ class FileModel extends Model {
    * @returns {Promise.<Array>}
    */
   async getBy(name, id) {
-    if (typeof name !== 'string') {
-      throw new AppError(400, 'Bad request: Name must be a string');
-    }
-
-    if (!Number.isInteger(id) || id <= 0) {
-      throw new AppError(400, 'Bad request: Id must be a positive integer');
-    }
-
-    return this._dataSource.filter(_obj => _obj[name] === id);
+    const objects = await this._readFile();
+    return objects.filter(_object => _object[name] === id);
   }
 
   /**
@@ -61,24 +45,33 @@ class FileModel extends Model {
    * @returns {Promise.<void>}
    */
   async remove(id) {
-    if (!Number.isInteger(id) || id <= 0) {
-      throw new AppError(400, 'Bad request: Id must be a positive integer');
-    }
-
-    const objIndex = this._dataSource.findIndex(_obj => _obj.id === id);
-    if (objIndex === -1) {
-      throw new AppError(404, `Not found: Wasn't found by id ${id}`);
-    }
-
-    this._dataSource.splice(objIndex, 1);
+    const objects = await this._readFile();
+    const objectIndex = objects.findIndex(_object => _object.id === id);
+    objects.splice(objectIndex, 1);
     await this._writeFile();
+  }
+  
+  /**
+   * Creates new object by data
+   * @param {Object} data Data to create object with
+   * @returns {Promise.<Object>}
+   */
+  async create(data) {
+    const objects = await this._readFile();
+    const object = {
+      ...data,
+      id: Math.max(...Object.values(objects).map(_object => _object.id), 0) + 1,
+    };
+    objects.push(object);
+    await this._writeFile();
+    return object;
   }
 
   /**
    * Reads data from file
    * @returns {Promise.<Array>}
    */
-  readFile() {
+  _readFile() {
     return new Promise((resolve, reject) => {
       if (this._dataSource) resolve(this._dataSource);
       fs.readFile(this._dataSourceFilePath, (err, dataJSON) => {
@@ -86,9 +79,8 @@ class FileModel extends Model {
           reject(err);
         } else {
           try {
-            const data = JSON.parse(dataJSON);
-            this._dataSource = data;
-            resolve(data);
+            this._dataSource = JSON.parse(dataJSON);
+            resolve(this._dataSource);
           } catch (err) {
             reject(err);
           }

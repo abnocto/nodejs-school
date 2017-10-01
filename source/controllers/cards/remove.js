@@ -1,5 +1,5 @@
 module.exports = async (ctx) => {
   const id = Number(ctx.params.id);
-  await ctx.CardsModel.remove(id);
+  await ctx.CardsService.remove(id);
   ctx.status = 200;
 };

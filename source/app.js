@@ -4,8 +4,8 @@ const bodyParser = require('koa-bodyparser');
 
 const router = require('./router');
 
-const CardsModel = require('./models/cardsModel');
-const TransactionsModel = require('./models/transactionsModel');
+const CardsService = require('./services/cardsService');
+const TransactionsService = require('./services/transactionsService');
 
 const AppError = require('../libs/appError');
 
@@ -37,10 +37,8 @@ app.use(async (ctx, next) => {
 
 // add file models as context props
 app.use(async (ctx, next) => {
-  ctx.CardsModel = new CardsModel();
-  await ctx.CardsModel.readFile();
-  ctx.TransactionsModel = new TransactionsModel();
-  await ctx.TransactionsModel.readFile();
+  ctx.CardsService = new CardsService();
+  ctx.TransactionsService = new TransactionsService();
   await next();
 });
 

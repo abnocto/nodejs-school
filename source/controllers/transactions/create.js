@@ -1,5 +1,6 @@
 module.exports = async (ctx) => {
   const data = ctx.request.body;
-  ctx.body = await ctx.TransactionsModel.create(data);
+  const cardId = Number(ctx.params.id);
+  ctx.body = await ctx.TransactionsService.create(data, cardId);
   ctx.status = 201;
 };

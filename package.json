@@ -46,7 +46,7 @@
   "scripts": {
     "start": "node source/app.js",
     "nodemon": "nodemon source/app.js",
-    "test": "mocha",
+    "test": "mocha ./test/cards.test.js ./test/transactions.test.js",
     "webpack": "./node_modules/.bin/webpack"
   }
 }
