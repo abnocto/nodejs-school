@@ -1,5 +1,7 @@
 const router = require('koa-router')();
 
+const indexController = require('./controllers/index');
+
 const getAllCardsController = require('./controllers/cards/get-all');
 const createCardController = require('./controllers/cards/create');
 const removeCardController = require('./controllers/cards/remove');
@@ -8,6 +10,8 @@ const getTransactionsController = require('./controllers/transactions/get');
 const createTransactionController = require('./controllers/transactions/create');
 
 const errorController = require('./controllers/error');
+
+router.get('/', indexController);
 
 router.get('/cards', getAllCardsController);
 router.post('/cards', createCardController);

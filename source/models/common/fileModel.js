@@ -58,10 +58,11 @@ class FileModel extends Model {
    */
   async create(data) {
     const objects = await this._readFile();
-    const object = {
-      ...data,
-      id: Math.max(...Object.values(objects).map(_object => _object.id), 0) + 1,
-    };
+    const object = Object.assign(
+      {},
+      data,
+      { id: Math.max(...Object.values(objects).map(_object => _object.id), 0) + 1 },
+    );
     objects.push(object);
     await this._writeFile();
     return object;

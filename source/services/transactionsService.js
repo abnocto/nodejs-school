@@ -32,8 +32,8 @@ class TransactionsService extends Service {
       throw new AppError(403, 'Forbidden: Forbidden transaction type');
     }
     
-    if (typeof allowedData.sum !== 'number') {
-      throw new AppError(400, 'Bad request: Transaction sum is not a number');
+    if (typeof allowedData.sum !== 'string' || !Number.isInteger(Number(allowedData.sum))) {
+      throw new AppError(400, 'Bad request: Transaction sum is invalid');
     }
     
     const card = await this._getCardsModel().get(cardId);

@@ -5,6 +5,16 @@
 npm i
 ```
 
+## Test
+```sh 
+npm test
+```
+
+## Build
+```sh
+npm run build:prod 
+```
+
 ## Run
 ```sh
 npm start
