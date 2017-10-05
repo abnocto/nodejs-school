@@ -7,7 +7,12 @@
   ],
   
   "plugins": [
-    "emotion",
+    [
+      "emotion",
+      {
+        "extractStatic": true
+      }
+    ],
     [
       "import",
       {
