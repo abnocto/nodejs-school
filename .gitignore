@@ -1,5 +1,7 @@
-build/
+public/*.js
+public/*.css
 node_modules/
+source/views/index.js
 .DS_Store
 Thumbs.db
 .idea

@@ -5,14 +5,14 @@
 npm i
 ```
 
-## Test
-```sh 
-npm test
-```
-
 ## Build
 ```sh
 npm run build:prod 
+```
+
+## Test
+```sh 
+npm test
 ```
 
 ## Run

@@ -34,6 +34,7 @@ module.exports = {
     'no-confusing-arrow': 'off',
     'no-console': 'warn',
     'no-empty-function': 'off',
+    'no-param-reassign': 'warn',
     'no-return-await': 'off',
     'no-shadow': 'off',
     'no-trailing-spaces': 'off',
@@ -46,8 +47,10 @@ module.exports = {
     'react/jsx-filename-extension': ['error', { 'extensions': ['.js', '.jsx'] }],
     'react/forbid-prop-types': 'warn',
     'react/no-array-index-key': 'warn',
+    'react/no-danger': 'warn',
     'react/no-unused-prop-types': 'warn',
     'react/require-default-props': 'warn',
+    'jsx-a11y/html-has-lang': 'warn',
   },
   
   plugins: [

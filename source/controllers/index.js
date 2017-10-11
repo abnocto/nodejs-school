@@ -1,5 +1,12 @@
-const ssr = require('../../public/bundle.server').default;
+const { renderToStaticMarkup } = require('react-dom/server');
+const indexView = require('../views');
 
 module.exports = (ctx) => {
-  ctx.body = ssr();
+  const data = {
+    user: {
+      login: 'samuel_johnson',
+      name: 'Samuel Johnson',
+    },
+  };
+  ctx.body = renderToStaticMarkup(indexView(data));
 };
