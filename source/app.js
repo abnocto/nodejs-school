@@ -9,6 +9,8 @@ const TransactionsService = require('./services/transactionsService');
 
 const AppError = require('../libs/appError');
 
+const logger = require('../libs/logger')('wallet-app');
+
 const app = new Koa();
 
 // logger
@@ -16,7 +18,7 @@ app.use(async (ctx, next) => {
   const start = Date.now();
   await next();
   const time = Date.now() - start;
-  console.log(`Request log: ${ctx.method} ${ctx.path} ${ctx.status} ${ctx.state.isError ? `'Error: ${ctx.body}'` : ''} ${time} ms`);
+  logger.info(`Request log: ${ctx.method} ${ctx.path} ${ctx.status} ${ctx.state.isError ? `'Error: ${ctx.body}'` : ''} ${time} ms`);
 });
 
 // error handler
@@ -28,7 +30,7 @@ app.use(async (ctx, next) => {
       ctx.status = err.status;
     } else {
       ctx.status = 500;
-      console.log(`Server error: ${err.message}`);
+      logger.error(`Server error: ${err.message}`);
     }
     ctx.body = err.message;
     ctx.state.isError = true;
@@ -52,7 +54,7 @@ app.use(router.routes());
 app.use(serve('./public'));
 
 const server = app.listen(3000, () => {
-  console.log('YM Node School App listening on port 3000!');
+  logger.info('YM Node School App listening on port 3000!');
 });
 
 module.exports = server;

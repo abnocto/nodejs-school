@@ -32,7 +32,7 @@ module.exports = {
     'max-len': 'off',
     'no-alert': 'warn',
     'no-confusing-arrow': 'off',
-    'no-console': 'warn',
+    'no-console': 'error',
     'no-empty-function': 'off',
     'no-param-reassign': 'warn',
     'no-return-await': 'off',

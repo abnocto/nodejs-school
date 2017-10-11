@@ -7,7 +7,6 @@ import { App } from '../client/components';
 module.exports = (appData) => {
   const app = renderToString(<App data={appData} />);
   const { ids, html, css } = extractCritical(app);
-  console.log(ids, html, css);
   const data = `window.__data = ${serialize({ ids, appData })};`;
   
   return (
