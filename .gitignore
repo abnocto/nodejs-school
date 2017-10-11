@@ -1,11 +1,11 @@
 public/*.js
 public/*.css
+logs/*.log
 node_modules/
 source/views/index.js
 .DS_Store
 Thumbs.db
 .idea
 *.sublime*
-*.log
 npm-debug.log*
 *.emotion.css
