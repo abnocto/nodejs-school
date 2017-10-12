@@ -49,6 +49,7 @@ module.exports = {
     'react/no-array-index-key': 'warn',
     'react/no-danger': 'warn',
     'react/no-unused-prop-types': 'warn',
+    'react/prop-types': 'warn',
     'react/require-default-props': 'warn',
     'jsx-a11y/html-has-lang': 'warn',
   },

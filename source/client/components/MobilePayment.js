@@ -1,39 +1,17 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 import MobilePaymentContract from './MobilePaymentContract';
-import MobilePaymentSuccess from './MobilePaymentSuccess';
+import MobilePaymentResult from './MobilePaymentResult';
+import * as cardActions from '../actions/card';
 
 /**
  * Класс компонента MobilePayment
  */
 class MobilePayment extends Component {
-  /**
-   * Конструктор
-   * @param {Object} props свойства компонента MobilePayment
-   */
-  constructor(props) {
-    super(props);
-    
-    this.state = { stage: 'contract' };
-  }
-  
-  /**
-   * Обработка успешного платежа
-   * @param {Object} transaction данные о транзакции
-   */
-  onPaymentSuccess(transaction) {
-    this.setState({
-      stage: 'success',
-      transaction,
-    });
-  }
-  
-  /**
-   * Повторить платеж
-   */
   repeatPayment() {
-    this.setState({ stage: 'contract' });
+    this.props.reset();
   }
   
   /**
@@ -43,13 +21,13 @@ class MobilePayment extends Component {
    * @returns {JSX}
    */
   render() {
-    const { activeCard } = this.props;
+    const { activeCard, card, transaction } = this.props;
     
-    if (this.state.stage === 'success') {
+    if (card.payMode) {
       return (
-        <MobilePaymentSuccess
-          activeCard={activeCard}
-          transaction={this.state.transaction}
+        <MobilePaymentResult
+          card={card}
+          transaction={transaction}
           repeatPayment={() => this.repeatPayment()}
         />
       );
@@ -58,7 +36,7 @@ class MobilePayment extends Component {
     return (
       <MobilePaymentContract
         activeCard={activeCard}
-        onPaymentSuccess={transaction => this.onPaymentSuccess(transaction)}
+        pay={this.props.pay}
       />
     );
   }
@@ -71,4 +49,10 @@ MobilePayment.propTypes = {
   }).isRequired,
 };
 
-export default MobilePayment;
+export default connect(
+  state => ({
+    card: state.card,
+    transaction: state.transaction,
+  }),
+  dispatch => bindActionCreators(cardActions, dispatch),
+)(MobilePayment);

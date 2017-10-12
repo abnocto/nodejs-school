@@ -114,8 +114,13 @@ class MobilePaymentContract extends Component {
     if (!isNumber || sum === 0) {
       return;
     }
-    
-    this.props.onPaymentSuccess({ sum, phoneNumber, commission });
+  
+    const data = {
+      sum: Number(sum) + Number(commission),
+      data: phoneNumber,
+    };
+  
+    this.props.pay(this.props.activeCard.id, data);
   }
   
   /**
@@ -183,7 +188,7 @@ MobilePaymentContract.propTypes = {
     id: PropTypes.number,
     theme: PropTypes.object,
   }).isRequired,
-  onPaymentSuccess: PropTypes.func.isRequired,
+  pay: PropTypes.func.isRequired,
 };
 
 export default MobilePaymentContract;

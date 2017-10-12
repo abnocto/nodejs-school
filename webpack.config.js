@@ -21,7 +21,7 @@ module.exports = [
   {
   
     entry: {
-      index: './source/client/index.js',
+      index: ['babel-polyfill', './source/client/index.js'],
     },
     
     output: {
@@ -79,7 +79,7 @@ module.exports = [
   {
   
     entry: {
-      index: './source/views/index.src.js',
+      index: ['babel-polyfill', './source/controllers/index.src.js'],
     },
     
     target: 'node',
@@ -87,7 +87,7 @@ module.exports = [
     externals: getExternals(),
   
     output: {
-      path: path.join(__dirname, 'source/views'),
+      path: path.join(__dirname, 'source/controllers'),
       filename: '[name].js',
       libraryTarget: 'umd',
     },

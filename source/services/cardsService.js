@@ -38,7 +38,7 @@ class CardsService extends Service {
    * @param {Number} id Card id
    * @param {Object} data Operation data
    * @param {String} mode Mobile operation mode: 'PAYMENT' or 'REFILL'
-   * @returns {Promise.<void>}
+   * @returns {Promise.<Object>}
    */
   async mobile(id, data, mode) {
     if (!['PAYMENT', 'REFILL'].includes(mode)) {
@@ -48,8 +48,10 @@ class CardsService extends Service {
     if (!Number.isInteger(id) || id <= 0) {
       throw new AppError(400, 'Bad request: Id must be a positive integer');
     }
-    
-    if (!data || !data.amount || typeof data.amount !== 'number' || data.amount <= 0) {
+  
+    if (!data
+      || typeof data.sum !== 'number' || data.sum <= 0
+      || typeof data.data !== 'string') {
       throw new AppError(400, 'Bad request: Mobile operation data is invalid');
     }
   
@@ -58,32 +60,34 @@ class CardsService extends Service {
       throw new AppError(404, `Not found: Card wasn't found by id ${id}`);
     }
     
-    if (mode === 'PAYMENT' && card.balance < data.amount) {
-      throw new AppError(403, 'Forbidden: Card balance is less than payment amount');
+    if (mode === 'PAYMENT' && card.balance < data.sum) {
+      throw new AppError(403, 'Forbidden: Card balance is less than payment sum');
     }
     
     let transactionSum;
   
     if (mode === 'PAYMENT') {
-      transactionSum = -data.amount;
+      transactionSum = -data.sum;
     }
     
     if (mode === 'REFILL') {
-      transactionSum = data.amount;
+      transactionSum = data.sum;
     }
   
     card.balance += transactionSum;
     await this._getModel().update(card);
   
-    const transaction = {
+    const transactionData = {
       cardId: card.id,
-      data: '+7(999)111-22-33',
+      data: data.data,
       type: 'paymentMobile',
       time: (new Date()).toISOString(),
       sum: transactionSum,
     };
   
-    await this._getTransactionsModel().create(transaction);
+    const transaction = await this._getTransactionsModel().create(transactionData);
+    
+    return { card, transaction };
   }
   
   /**

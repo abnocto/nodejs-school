@@ -2,7 +2,7 @@ public/*.js
 public/*.css
 logs/*.log
 node_modules/
-source/views/index.js
+source/controllers/index.js
 .DS_Store
 Thumbs.db
 .idea

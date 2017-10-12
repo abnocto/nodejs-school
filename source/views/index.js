@@ -1,13 +1,23 @@
 import React from 'react';
+import { Provider } from 'react-redux';
 import { renderToString } from 'react-dom/server';
 import { extractCritical } from 'emotion-server';
 import serialize from 'serialize-javascript';
 import { App } from '../client/components';
+import configureStore from '../client/store';
 
 module.exports = (appData) => {
-  const app = renderToString(<App data={appData} />);
+  const store = configureStore(appData);
+  
+  const app = renderToString(
+    <Provider store={store}>
+      <App />
+    </Provider>,
+  );
+  
   const { ids, html, css } = extractCritical(app);
-  const data = `window.__data = ${serialize({ ids, appData })};`;
+  
+  const data = `window.__INITIAL_DATA__ = ${serialize({ ids, appData })};`;
   
   return (
     <html>

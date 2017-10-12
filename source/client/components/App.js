@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import styled from 'emotion/react';
 import { injectGlobal } from 'emotion';
 import CardInfo from 'card-info';
@@ -12,9 +13,6 @@ import {
 } from './';
 
 import './fonts.css';
-
-import cardsData from '../../data/cards.json';
-import transactionsData from '../../data/transactions.json';
 
 injectGlobal`
   html,
@@ -53,18 +51,10 @@ class App extends Component {
   /**
    * Конструктор
    */
-  constructor() {
-    super();
-    
-    const cardsList = this.prepareCardsData(cardsData);
-    const cardHistory = transactionsData.map((data) => {
-      const card = cardsList.find(card => card.id === data.cardId);
-      return card ? Object.assign({}, data, { card }) : data;
-    });
+  constructor(props) {
+    super(props);
     
     this.state = {
-      cardsList,
-      cardHistory,
       activeCardIndex: 0,
     };
   }
@@ -114,7 +104,18 @@ class App extends Component {
    * @returns {JSX}
    */
   render() {
-    const { cardsList, activeCardIndex, cardHistory } = this.state;
+    const { card, transaction } = this.props;
+  
+    const cardsData = card.keys.map(id => card.byId[id]);
+    const transactionsData = transaction.keys.map(id => transaction.byId[id]);
+  
+    const cardsList = this.prepareCardsData(cardsData);
+    const cardHistory = transactionsData.map((data) => {
+      const card = cardsList.find(card => card.id === data.cardId);
+      return card ? Object.assign({}, data, { card }) : data;
+    });
+    
+    const { activeCardIndex } = this.state;
     const activeCard = cardsList[activeCardIndex];
     
     const inactiveCardsList = cardsList.filter((card, index) => index === activeCardIndex ? false : card);
@@ -148,4 +149,11 @@ class App extends Component {
   }
 }
 
-export default App;
+export default connect(
+  state => ({
+    user: state.user,
+    card: state.card,
+    transaction: state.transaction,
+  }),
+  null,
+)(App);
