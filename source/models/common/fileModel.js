@@ -67,6 +67,19 @@ class FileModel extends Model {
     await this._writeFile();
     return object;
   }
+  
+  /**
+   * Updates object
+   * @param {Object} object Object to update
+   * @returns {Promise.<Object>}
+   */
+  async update(object) {
+    const objects = await this._readFile();
+    const objectIndex = objects.findIndex(_object => _object.id === object.id);
+    objects.splice(objectIndex, 1, object);
+    await this._writeFile();
+    return object;
+  }
 
   /**
    * Reads data from file

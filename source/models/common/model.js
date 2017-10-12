@@ -28,6 +28,13 @@ class Model {
   async create(data) {}
   
   /**
+   * Updates object
+   * @param {Object} object Object to update
+   * @returns {Promise}
+   */
+  async update(object) {}
+  
+  /**
    * Removes object by id
    * @param {Number} id Object id
    * @returns {Promise}
