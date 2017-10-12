@@ -63,6 +63,6 @@
     "build:prod": "NODE_ENV=production ./node_modules/.bin/webpack",
     "build:dev": "./node_modules/.bin/webpack",
     "eslint": "./node_modules/.bin/eslint .",
-    "precommit": "npm test && npm eslint"
+    "precommit": "npm test && npm run eslint"
   }
 }
