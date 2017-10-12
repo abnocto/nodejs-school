@@ -40,7 +40,7 @@ class CardsService extends Service {
     const { cardNumber, balance } = data;
     return typeof cardNumber === 'string'
       && cardNumber.length === 16
-      && typeof balance === 'string';
+      && typeof balance === 'number';
   }
   
   /**

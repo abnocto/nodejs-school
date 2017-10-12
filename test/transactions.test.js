@@ -53,9 +53,9 @@ describe('-- TRANSACTIONS --', () => {
   
   describe('POST /cards/:id/transactions: forbidden type', () => {
     const transactions = [
-      { cardId: 1, type: 'false', data: '220003000000003', time: '2017-08-9T05:28:31+03:00', sum: '2345' },
-      { cardId: 'false', type: 'test', data: '220003000000003', time: '2017-08-9T05:28:31+03:00', sum: '2345' },
-      { foo: 'bar', type: 'prepaidCard2Card', data: '220003000000003', time: '2017-08-9T05:28:31+03:00', sum: 'false' },
+      { cardId: 1, type: 'false', data: '220003000000003', time: '2017-08-9T05:28:31+03:00', sum: 2345 },
+      { cardId: 'false', type: 'test', data: '220003000000003', time: '2017-08-9T05:28:31+03:00', sum: 2345 },
+      { foo: 'bar', type: 'prepaidCard2Card', data: '220003000000003', time: '2017-08-9T05:28:31+03:00', sum: 2345 },
     ];
     
     transactions.forEach((transaction, index) => {
@@ -75,9 +75,9 @@ describe('-- TRANSACTIONS --', () => {
   
   describe('POST /cards/:id/transactions: bad sum', () => {
     const transactions = [
-      { cardId: 1, type: 'prepaidCard', data: '220003000000003', time: '2017-08-9T05:28:31+03:00', sum: 2500 },
+      { cardId: 1, type: 'prepaidCard', data: '220003000000003', time: '2017-08-9T05:28:31+03:00', sum: '2500' },
       { cardId: 1, type: 'prepaidCard', data: '220003000000003', time: '2017-08-9T05:28:31+03:00', sum: '1000abc' },
-      { cardId: 1, type: 'prepaidCard', data: '220003000000003', time: '2017-08-9T05:28:31+03:00', sum: 'null' },
+      { cardId: 1, type: 'prepaidCard', data: '220003000000003', time: '2017-08-9T05:28:31+03:00', sum: '0' },
     ];
     
     transactions.forEach((transaction, index) => {
@@ -97,7 +97,7 @@ describe('-- TRANSACTIONS --', () => {
   
   describe('POST /cards/:id/transactions: card not found by foreign key', () => {
     const transactions = [
-      { type: 'prepaidCard', data: '220003000000003', sum: '1234' },
+      { type: 'prepaidCard', data: '220003000000003', sum: 1234 },
     ];
     
     transactions.forEach((transaction, index) => {
@@ -117,9 +117,9 @@ describe('-- TRANSACTIONS --', () => {
   
   describe('POST /cards/:id/transactions: bad time', () => {
     const transactions = [
-      { cardId: 1, type: 'prepaidCard', data: '220003000000003', time: 'a', sum: '1234' },
-      { cardId: 1, type: 'prepaidCard', data: '220003000000003', time: 'null', sum: '2345' },
-      { cardId: 1, type: 'prepaidCard', data: '220003000000003', time: 'Object', sum: '3456' },
+      { cardId: 1, type: 'prepaidCard', data: '220003000000003', time: 'a', sum: 1234 },
+      { cardId: 1, type: 'prepaidCard', data: '220003000000003', time: 'null', sum: 2345 },
+      { cardId: 1, type: 'prepaidCard', data: '220003000000003', time: 'Object', sum: 3456 },
     ];
     
     transactions.forEach((transaction, index) => {
@@ -139,27 +139,27 @@ describe('-- TRANSACTIONS --', () => {
   
   describe('POST /cards/:id/transactions: ok', () => {
     const transactions = [
-      { cardId: 1, type: 'prepaidCard', data: '220003000000003', time: '2017-10-04T05:28:31+03:00', sum: '2345' },
-      { cardId: 1, type: 'paymentMobile', data: '+7(921)3333333', time: '2017-10-04T06:28:31+03:00', sum: '-25' },
-      { cardId: 1, type: 'card2Card', data: '220003000000005', time: '2017-10-04T13:28:31+03:00', sum: '-174' },
-      { cardId: 1, type: 'prepaidCard', data: '220003000000003', time: '2017-10-04T12:28:31+03:00', sum: '2345' },
-      { cardId: 1, type: 'paymentMobile', data: '+7(921)3333333', time: '2017-10-04T11:28:31+03:00', sum: '-25' },
-      { cardId: 1, type: 'card2Card', data: '220003000000005', time: '2017-10-04T13:29:31+03:00', sum: '-174' },
-      { cardId: 1, type: 'card2Card', data: '220003000000005', time: '2017-10-04T13:28:35+03:00', sum: '-174' },
-      { cardId: 2, type: 'prepaidCard', data: '220003000000003', time: '2017-10-04T13:28:31+03:00', sum: '2345' },
-      { cardId: 2, type: 'paymentMobile', data: '+7(921)3333333', time: '2017-10-04T13:28:31+03:00', sum: '-25' },
-      { cardId: 2, type: 'card2Card', data: '220003000000005', time: '2017-10-04T13:28:31+03:00', sum: '-174' },
-      { cardId: 2, type: 'prepaidCard', data: '220003000000003', time: '2017-10-04T13:28:31+03:00', sum: '2345' },
-      { cardId: 2, type: 'paymentMobile', data: '+7(921)3333333', time: '2017-10-04T13:28:31+03:00', sum: '-25' },
-      { cardId: 2, type: 'card2Card', data: '220003000000005', time: '2017-10-04T13:28:31+03:00', sum: '-174' },
-      { cardId: 3, type: 'prepaidCard', data: '220003000000003', time: '2017-10-04T13:28:31+03:00', sum: '2345' },
-      { cardId: 3, type: 'paymentMobile', data: '+7(921)3333333', time: '2017-10-04T13:28:31+03:00', sum: '-25' },
-      { cardId: 4, type: 'prepaidCard', data: '220003000000003', time: '2017-10-04T13:28:31+03:00', sum: '2345' },
-      { cardId: 4, type: 'paymentMobile', data: '+7(921)3333333', time: '2017-10-04T13:28:31+03:00', sum: '-25' },
-      { cardId: 4, type: 'card2Card', data: '220003000000005', time: '2017-10-04T13:28:31+03:00', sum: '-174' },
-      { cardId: 4, type: 'prepaidCard', data: '220003000000003', time: '2017-10-04T13:28:31+03:00', sum: '2345' },
-      { cardId: 4, type: 'paymentMobile', data: '+7(921)3333333', time: '2017-10-04T13:28:31+03:00', sum: '-25' },
-      { cardId: 4, type: 'card2Card', data: '220003000000005', time: '2017-10-04T13:28:31+03:00', sum: '-174' },
+      { cardId: 1, type: 'prepaidCard', data: '220003000000003', time: '2017-10-04T05:28:31+03:00', sum: 2345 },
+      { cardId: 1, type: 'paymentMobile', data: '+7(921)3333333', time: '2017-10-04T06:28:31+03:00', sum: -25 },
+      { cardId: 1, type: 'card2Card', data: '220003000000005', time: '2017-10-04T13:28:31+03:00', sum: -174 },
+      { cardId: 1, type: 'prepaidCard', data: '220003000000003', time: '2017-10-04T12:28:31+03:00', sum: 2345 },
+      { cardId: 1, type: 'paymentMobile', data: '+7(921)3333333', time: '2017-10-04T11:28:31+03:00', sum: -25 },
+      { cardId: 1, type: 'card2Card', data: '220003000000005', time: '2017-10-04T13:29:31+03:00', sum: -174 },
+      { cardId: 1, type: 'card2Card', data: '220003000000005', time: '2017-10-04T13:28:35+03:00', sum: -174 },
+      { cardId: 2, type: 'prepaidCard', data: '220003000000003', time: '2017-10-04T13:28:31+03:00', sum: 2345 },
+      { cardId: 2, type: 'paymentMobile', data: '+7(921)3333333', time: '2017-10-04T13:28:31+03:00', sum: -25 },
+      { cardId: 2, type: 'card2Card', data: '220003000000005', time: '2017-10-04T13:28:31+03:00', sum: -174 },
+      { cardId: 2, type: 'prepaidCard', data: '220003000000003', time: '2017-10-04T13:28:31+03:00', sum: 2345 },
+      { cardId: 2, type: 'paymentMobile', data: '+7(921)3333333', time: '2017-10-04T13:28:31+03:00', sum: -25 },
+      { cardId: 2, type: 'card2Card', data: '220003000000005', time: '2017-10-04T13:28:31+03:00', sum: -174 },
+      { cardId: 3, type: 'prepaidCard', data: '220003000000003', time: '2017-10-04T13:28:31+03:00', sum: 2345 },
+      { cardId: 3, type: 'paymentMobile', data: '+7(921)3333333', time: '2017-10-04T13:28:31+03:00', sum: -25 },
+      { cardId: 4, type: 'prepaidCard', data: '220003000000003', time: '2017-10-04T13:28:31+03:00', sum: 2345 },
+      { cardId: 4, type: 'paymentMobile', data: '+7(921)3333333', time: '2017-10-04T13:28:31+03:00', sum: -25 },
+      { cardId: 4, type: 'card2Card', data: '220003000000005', time: '2017-10-04T13:28:31+03:00', sum: -174 },
+      { cardId: 4, type: 'prepaidCard', data: '220003000000003', time: '2017-10-04T13:28:31+03:00', sum: 2345 },
+      { cardId: 4, type: 'paymentMobile', data: '+7(921)3333333', time: '2017-10-04T13:28:31+03:00', sum: -25 },
+      { cardId: 4, type: 'card2Card', data: '220003000000005', time: '2017-10-04T13:28:31+03:00', sum: -174 },
     ];
     
     transactions.forEach((transaction, index) => {

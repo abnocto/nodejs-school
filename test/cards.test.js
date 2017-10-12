@@ -32,7 +32,7 @@ describe('-- CARDS --', () => {
       { cardNumber: 'text', balance: 1 },
       { cardNumber: '1', balance: 1 },
       { cardNumber: '12345', balance: '12345' },
-      { cardNumber: '4111111111111111', balance: 12345 },
+      { cardNumber: '4111111111111111', balance: '12345' },
     ];
     
     cards.forEach((card, index) => {
@@ -52,11 +52,11 @@ describe('-- CARDS --', () => {
   
   describe('POST /cards: invalid number', () => {
     const cards = [
-      { cardNumber: '1234123412341234', balance: '12345' },
-      { cardNumber: '1535153515351535', balance: '12345' },
-      { cardNumber: '5678434234763470', balance: '1234' },
-      { cardNumber: '0942341537482374', balance: '99999999' },
-      { cardNumber: '5742387195357823', balance: '0' },
+      { cardNumber: '1234123412341234', balance: 12345 },
+      { cardNumber: '1535153515351535', balance: 12345 },
+      { cardNumber: '5678434234763470', balance: 1234 },
+      { cardNumber: '0942341537482374', balance: 99999999 },
+      { cardNumber: '5742387195357823', balance: 0 },
     ];
     
     cards.forEach((card, index) => {
@@ -76,12 +76,12 @@ describe('-- CARDS --', () => {
   
   describe('POST /cards: OK', () => {
     const cards = [
-      { cardNumber: '5469250000000004', balance: '231310' },
-      { cardNumber: '6762300000000009', balance: '0' },
-      { cardNumber: '4058700000000008', balance: '700' },
-      { cardNumber: '5500640000000007', balance: '2' },
-      { cardNumber: '4377840000000006', balance: '4545' },
-      { cardNumber: '6768030000000006', balance: '120' },
+      { cardNumber: '5469250000000004', balance: 231310 },
+      { cardNumber: '6762300000000009', balance: 0 },
+      { cardNumber: '4058700000000008', balance: 700 },
+      { cardNumber: '5500640000000007', balance: 2 },
+      { cardNumber: '4377840000000006', balance: 4545 },
+      { cardNumber: '6768030000000006', balance: 120 },
     ];
     
     cards.forEach((card, index) => {
@@ -94,7 +94,7 @@ describe('-- CARDS --', () => {
             res.body.should.be.a('object');
             res.body.should.have.property('id').be.a('number');
             res.body.should.have.property('cardNumber').be.a('string');
-            res.body.should.have.property('balance').be.a('string');
+            res.body.should.have.property('balance').be.a('number');
             done();
           });
       });
@@ -103,10 +103,10 @@ describe('-- CARDS --', () => {
   
   describe('POST /cards: duplicate number', () => {
     const cards = [
-      { cardNumber: '5469250000000004', balance: '12345' },
-      { cardNumber: '6762300000000009', balance: '15000' },
-      { cardNumber: '5500640000000007', balance: '-700' },
-      { cardNumber: '6768030000000006', balance: '0' },
+      { cardNumber: '5469250000000004', balance: 12345 },
+      { cardNumber: '6762300000000009', balance: 15000 },
+      { cardNumber: '5500640000000007', balance: -700 },
+      { cardNumber: '6768030000000006', balance: 0 },
     ];
     
     cards.forEach((card, index) => {
