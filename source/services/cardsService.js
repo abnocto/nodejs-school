@@ -49,8 +49,8 @@ class CardsService extends Service {
       throw new AppError(400, 'Bad request: Id must be a positive integer');
     }
     
-    if (!data || !data.amount || typeof data.amount !== 'number') {
-      throw new AppError(400, 'Bad request: Payment data is invalid');
+    if (!data || !data.amount || typeof data.amount !== 'number' || data.amount <= 0) {
+      throw new AppError(400, 'Bad request: Mobile operation data is invalid');
     }
   
     const card = await this._getModel().get(id);
@@ -58,33 +58,90 @@ class CardsService extends Service {
       throw new AppError(404, `Not found: Card wasn't found by id ${id}`);
     }
     
-    if (card.balance < data.amount) {
+    if (mode === 'PAYMENT' && card.balance < data.amount) {
       throw new AppError(403, 'Forbidden: Card balance is less than payment amount');
     }
     
-    let transactionType;
+    let transactionSum;
   
     if (mode === 'PAYMENT') {
-      card.balance -= data.amount;
-      transactionType = 'paymentMobile';
+      transactionSum = -data.amount;
     }
     
     if (mode === 'REFILL') {
-      card.balance += data.amount;
-      transactionType = 'refillMobile';
+      transactionSum = data.amount;
     }
-    
+  
+    card.balance += transactionSum;
     await this._getModel().update(card);
   
     const transaction = {
       cardId: card.id,
       data: '+7(999)111-22-33',
-      type: transactionType,
+      type: 'paymentMobile',
+      time: (new Date()).toISOString(),
+      sum: transactionSum,
+    };
+  
+    await this._getTransactionsModel().create(transaction);
+  }
+  
+  /**
+   * Transfer operation. Creates two transactions for each card, changes cards balances.
+   * @param {Number} id Card id
+   * @param {Object} data Operation data
+   * @returns {Promise.<void>}
+   */
+  async transfer(id, data) {
+    if (!Number.isInteger(id) || id <= 0) {
+      throw new AppError(400, 'Bad request: Id must be a positive integer');
+    }
+  
+    if (!data
+      || !data.amount || typeof data.amount !== 'number' || data.amount <= 0
+      || !data.receiverCardId || typeof data.receiverCardId !== 'number' || data.receiverCardId <= 0) {
+      throw new AppError(400, 'Bad request: Transfer operation data is invalid');
+    }
+  
+    const cardSender = await this._getModel().get(id);
+    if (!cardSender) {
+      throw new AppError(404, `Not found: Card (sender) wasn't found by id ${id}`);
+    }
+  
+    const cardReceiver = await this._getModel().get(data.receiverCardId);
+    if (!cardReceiver) {
+      throw new AppError(404, `Not found: Card (receiver) wasn't found by id ${data.receiverCardId}`);
+    }
+  
+    if (cardSender.balance < data.amount) {
+      throw new AppError(403, 'Forbidden: Card (sender) balance is less than payment amount');
+    }
+    
+    cardSender.balance -= data.amount;
+    await this._getModel().update(cardSender);
+  
+    cardReceiver.balance += data.amount;
+    await this._getModel().update(cardReceiver);
+  
+    const transactionForSender = {
+      cardId: cardSender.id,
+      data: cardReceiver.cardNumber,
+      type: 'card2Card',
+      time: (new Date()).toISOString(),
+      sum: -data.amount,
+    };
+  
+    await this._getTransactionsModel().create(transactionForSender);
+  
+    const transactionForReceiver = {
+      cardId: cardReceiver.id,
+      data: cardSender.cardNumber,
+      type: 'card2Card',
       time: (new Date()).toISOString(),
       sum: data.amount,
     };
   
-    await this._getTransactionsModel().create(transaction);
+    await this._getTransactionsModel().create(transactionForReceiver);
   }
   
   /**
