@@ -30,7 +30,7 @@ app.use(async (ctx, next) => {
       ctx.status = err.status;
     } else {
       ctx.status = 500;
-      logger.error(`Server error: ${err.message}`);
+      logger.error(`Server error: ${err.message} ${err.stack}`);
     }
     ctx.body = err.message;
     ctx.state.isError = true;

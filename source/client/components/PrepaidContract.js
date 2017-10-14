@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'emotion/react';
-
+import { getValidSum } from '../service/contractService';
 import { Island, Title, Button, Input } from './';
 
 const PrepaidLayout = styled(Island)`
@@ -70,106 +70,66 @@ const Currency = styled.span`
   color: #fff;
 `;
 
-/**
- * Класс компонента PrepaidContract
- */
 class PrepaidContract extends Component {
-  /**
-   * Конструктор
-   * @param {Object} props свойства компонента PrepaidContract
-   */
   constructor(props) {
     super(props);
-    
     this.state = {
-      activeCardIndex: 0,
       sum: 0,
     };
   }
   
   /**
-   * Изменения активной карты
-   * @param {Number} activeCardIndex индекс активной карты
+   * @param {Event} event
    */
-  onCardChange(activeCardIndex) {
-    this.setState({ activeCardIndex });
-  }
-  
-  /**
-   * Обработка изменения значения в input
-   * @param {Event} event событие изменения значения input
-   */
-  onChangeInputValue(event) {
-    if (!event) {
-      return;
-    }
-    
-    const { name, value } = event.target;
-    
+  handleSumChange(event) {
+    if (!event) return;
     this.setState({
-      [name]: value,
+      sum: getValidSum(event.target.value, this.props.preparedPrepaidCard.balance),
     });
   }
   
   /**
-   * Отправка формы
-   * @param {Event} event событие отправки формы
+   * @param {Event} event
    */
-  onSubmitForm(event) {
-    if (event) {
-      event.preventDefault();
-    }
-    
+  handleSubmit(event) {
+    if (event) event.preventDefault();
     const { sum } = this.state;
-    const { activeCard } = this.props;
-    
-    const isNumber = !isNaN(parseFloat(sum)) && isFinite(sum);
-    if (!isNumber || sum <= 0) {
-      return;
-    }
-    
-    this.props.onPaymentSuccess({
+    if (sum < 1) return;
+    const { id } = this.props.preparedPrepaidCard;
+    const data = {
+      receiverCardId: this.props.preparedActiveCard.id,
       sum,
-      number: activeCard.number,
-    });
+    };
+    this.props.transfer(id, data);
   }
   
-  /**
-   *
-   * @returns {XML}
-   */
   render() {
-    const { inactiveCardsList } = this.props;
-    
-    const { activeCardIndex } = this.state;
-    const selectedCard = inactiveCardsList[activeCardIndex];
-    
+    const { preparedInactiveCardsList, preparedPrepaidCard, onCardChange } = this.props;
     return (
-      <form onSubmit={event => this.onSubmitForm(event)}>
+      <form onSubmit={event => this.handleSubmit(event)}>
         <PrepaidLayout>
           <PrepaidTitle>Пополнить карту</PrepaidTitle>
-          
           <PrepaidItems>
             {
-              inactiveCardsList.map((card, index) => (
+              preparedInactiveCardsList.map(card => (
                 <PrepaidItem
                   bgColor={card.theme.bgColor}
                   key={card.id}
-                  onClick={() => this.onCardChange(index)}
-                  selected={activeCardIndex === index}
+                  onClick={() => onCardChange(card.id)}
+                  selected={preparedPrepaidCard.id === card.id}
                 >
                   <PrepaidItemIcon
                     bankSmLogoUrl={card.theme.bankSmLogoUrl}
-                    selected={activeCardIndex === index}
+                    selected={preparedPrepaidCard.id === card.id}
                   />
                   <PrepaidItemTitle
                     textColor={card.theme.textColor}
-                    selected={activeCardIndex === index}
+                    selected={preparedPrepaidCard.id === card.id}
                   >
                     C банковской карты
                     <PrepaidItemDescription
                       textColor={card.theme.textColor}
-                      selected={activeCardIndex === index}
+                      selected={preparedPrepaidCard.id === card.id}
                     >
                       {card.number}
                     </PrepaidItemDescription>
@@ -178,19 +138,18 @@ class PrepaidContract extends Component {
               ))
             }
           </PrepaidItems>
-          
           <InputField>
             <SumInput
               name='sum'
               value={this.state.sum}
-              onChange={event => this.onChangeInputValue(event)}
+              onChange={event => this.handleSumChange(event)}
             />
             <Currency>₽</Currency>
           </InputField>
           <Button
             type='submit'
-            bgColor={selectedCard.theme.bgColor}
-            textColor={selectedCard.theme.textColor}
+            bgColor={preparedPrepaidCard.theme.bgColor}
+            textColor={preparedPrepaidCard.theme.textColor}
           >
             Пополнить
           </Button>
@@ -201,12 +160,11 @@ class PrepaidContract extends Component {
 }
 
 PrepaidContract.propTypes = {
-  activeCard: PropTypes.shape({
-    id: PropTypes.number,
-    theme: PropTypes.object,
-  }).isRequired,
-  inactiveCardsList: PropTypes.arrayOf(PropTypes.object).isRequired,
-  onPaymentSuccess: PropTypes.func.isRequired,
+  preparedActiveCard: PropTypes.object.isRequired,
+  preparedPrepaidCard: PropTypes.object.isRequired,
+  preparedInactiveCardsList: PropTypes.array.isRequired,
+  transfer: PropTypes.func.isRequired,
+  onCardChange: PropTypes.func.isRequired,
 };
 
 export default PrepaidContract;

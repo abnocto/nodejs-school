@@ -2,7 +2,15 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'emotion/react';
 import moment from 'moment';
-
+import {
+  PAYMENT_MOBILE,
+  PREPAID_CARD,
+  WITHDRAW_CARD,
+  PAYMENT_MOBILE_DESC,
+  PREPAID_CARD_DESC,
+  WITHDRAW_CARD_DESC,
+  DEFAULT_DESC,
+} from '../constants/transaction';
 import { Island } from './';
 
 const HistoryLayout = styled(Island)`
@@ -69,20 +77,20 @@ const History = ({ cardHistory }) => {
     let typeTitle = '';
     
     switch (item.type) {
-      case 'paymentMobile': {
-        typeTitle = 'Оплата телефона';
+      case PAYMENT_MOBILE: {
+        typeTitle = PAYMENT_MOBILE_DESC;
         break;
       }
-      case 'prepaidCard': {
-        typeTitle = 'Пополнение с карты';
+      case PREPAID_CARD: {
+        typeTitle = PREPAID_CARD_DESC;
         break;
       }
-      case 'withdrawCard': {
-        typeTitle = 'Перевод на карту';
+      case WITHDRAW_CARD: {
+        typeTitle = WITHDRAW_CARD_DESC;
         break;
       }
       default: {
-        typeTitle = 'Операция';
+        typeTitle = DEFAULT_DESC;
       }
     }
     

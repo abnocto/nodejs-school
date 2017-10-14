@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'emotion/react';
-
+import { MOBILE_PAYMENT_COMISSION } from '../constants/util';
+import { getValidSum } from '../service/contractService';
 import { Island, Title, Button, Input } from './';
 
 const MobilePaymentLayout = styled(Island)`
@@ -66,87 +67,70 @@ const InputCommision = styled(Input)`
   background-color: initial;
 `;
 
-/**
- * Компонент MobilePaymentContract
- */
 class MobilePaymentContract extends Component {
-  /**
-   * Конструктор
-   * @param {Object} props свойства компонента MobilePaymentContract
-   */
   constructor(props) {
     super(props);
-    
     this.state = {
-      phoneNumber: '+79218908064',
       sum: 0,
-      commission: 3,
+      commission: Number(MOBILE_PAYMENT_COMISSION),
     };
   }
   
   /**
-   * Получить цену с учетом комиссии
    * @returns {Number}
    */
   getSumWithCommission() {
     const { sum, commission } = this.state;
-    
-    const isNumber = !isNaN(parseFloat(sum)) && isFinite(sum);
-    if (!isNumber || sum <= 0) {
-      return 0;
-    }
-    
-    return Number(sum) + Number(commission);
+    return sum > 0 ? sum + commission : 0;
   }
   
   /**
-   * Отправка формы
-   * @param {Event} event событие отправки формы
+   * @returns {Number}
+   */
+  getMaxAllowedSum() {
+    const { commission } = this.state;
+    const { balance } = this.props.preparedActiveCard;
+    return balance - commission;
+  }
+  
+  /**
+   * @param {Event} event
    */
   handleSubmit(event) {
-    if (event) {
-      event.preventDefault();
-    }
-    
-    const { sum, phoneNumber, commission } = this.state;
-    
-    const isNumber = !isNaN(parseFloat(sum)) && isFinite(sum);
-    if (!isNumber || sum === 0) {
-      return;
-    }
-  
-    const data = {
-      sum: Number(sum) + Number(commission),
+    if (event) event.preventDefault();
+    const sum = this.getSumWithCommission();
+    if (sum < 1) return;
+    const { id } = this.props.preparedActiveCard;
+    const { phoneNumber } = this.props.user;
+    const transaction = {
+      sum,
       data: phoneNumber,
     };
-  
-    this.props.pay(this.props.activeCard.id, data);
+    this.props.pay(id, transaction);
   }
   
   /**
-   * Обработка изменения значения в input
-   * @param {Event} event событие изменения значения input
+   * @param {Event} event
    */
-  handleInputChange(event) {
-    if (!event) {
-      return;
-    }
-    
-    const { name, value } = event.target;
-    
+  handleSumChange(event) {
+    if (!event) return;
+    const maxAllowedSum = this.getMaxAllowedSum();
     this.setState({
-      [name]: value,
+      sum: getValidSum(event.target.value, maxAllowedSum),
     });
   }
   
-  /**
-   * Рендер компонента
-   *
-   * @override
-   * @returns {JSX}
-   */
   render() {
-    const { commission } = this.state;
+    const { sum, commission } = this.state;
+    const { phoneNumber } = this.props.user;
+    
+    if (!phoneNumber) {
+      return (
+        <MobilePaymentLayout>
+          <MobilePaymentTitle>Укажите в «Настройках» номер телефона для возможности оплаты!</MobilePaymentTitle>
+        </MobilePaymentLayout>
+      );
+    }
     
     return (
       <MobilePaymentLayout>
@@ -156,7 +140,7 @@ class MobilePaymentContract extends Component {
             <Label>Телефон</Label>
             <InputPhoneNumber
               name='phoneNumber'
-              value={this.state.phoneNumber}
+              value={phoneNumber}
               readOnly='true'
             />
           </InputField>
@@ -164,8 +148,8 @@ class MobilePaymentContract extends Component {
             <Label>Сумма</Label>
             <InputSum
               name='sum'
-              value={this.state.sum}
-              onChange={event => this.handleInputChange(event)}
+              value={sum}
+              onChange={event => this.handleSumChange(event)}
             />
             <Currency>₽</Currency>
           </InputField>
@@ -176,7 +160,12 @@ class MobilePaymentContract extends Component {
           </InputField>
           <Commission>Размер коммиссии составляет {commission} ₽</Commission>
           <Underline />
-          <PaymentButton bgColor='#fff' textColor='#108051'>Заплатить</PaymentButton>
+          <PaymentButton
+            bgColor='#fff'
+            textColor='#108051'
+          >
+            Заплатить
+          </PaymentButton>
         </form>
       </MobilePaymentLayout>
     );
@@ -184,10 +173,8 @@ class MobilePaymentContract extends Component {
 }
 
 MobilePaymentContract.propTypes = {
-  activeCard: PropTypes.shape({
-    id: PropTypes.number,
-    theme: PropTypes.object,
-  }).isRequired,
+  user: PropTypes.object.isRequired,
+  preparedActiveCard: PropTypes.object.isRequired,
   pay: PropTypes.func.isRequired,
 };
 

@@ -1,4 +1,4 @@
-import { stateFlags, objectFlags } from './flagService';
+import { stateFlags, objectFlags } from './reducersFlagService';
 
 export function getInitialState() {
   return {

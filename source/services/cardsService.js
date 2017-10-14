@@ -87,14 +87,17 @@ class CardsService extends Service {
   
     const transaction = await this._getTransactionsModel().create(transactionData);
     
-    return { card, transaction };
+    return {
+      cards: [card],
+      transactions: [transaction],
+    };
   }
   
   /**
    * Transfer operation. Creates two transactions for each card, changes cards balances.
    * @param {Number} id Card id
    * @param {Object} data Operation data
-   * @returns {Promise.<void>}
+   * @returns {Promise.<Object>}
    */
   async transfer(id, data) {
     if (!Number.isInteger(id) || id <= 0) {
@@ -102,50 +105,55 @@ class CardsService extends Service {
     }
   
     if (!data
-      || !data.amount || typeof data.amount !== 'number' || data.amount <= 0
+      || !data.sum || typeof data.sum !== 'number' || data.sum <= 0
       || !data.receiverCardId || typeof data.receiverCardId !== 'number' || data.receiverCardId <= 0) {
       throw new AppError(400, 'Bad request: Transfer operation data is invalid');
     }
   
-    const cardSender = await this._getModel().get(id);
-    if (!cardSender) {
+    const cardSenderData = await this._getModel().get(id);
+    if (!cardSenderData) {
       throw new AppError(404, `Not found: Card (sender) wasn't found by id ${id}`);
     }
   
-    const cardReceiver = await this._getModel().get(data.receiverCardId);
-    if (!cardReceiver) {
+    const cardReceiverData = await this._getModel().get(data.receiverCardId);
+    if (!cardReceiverData) {
       throw new AppError(404, `Not found: Card (receiver) wasn't found by id ${data.receiverCardId}`);
     }
   
-    if (cardSender.balance < data.amount) {
+    if (cardSenderData.balance < data.sum) {
       throw new AppError(403, 'Forbidden: Card (sender) balance is less than payment amount');
     }
-    
-    cardSender.balance -= data.amount;
-    await this._getModel().update(cardSender);
   
-    cardReceiver.balance += data.amount;
-    await this._getModel().update(cardReceiver);
+    cardSenderData.balance -= data.sum;
+    const cardSender = await this._getModel().update(cardSenderData);
   
-    const transactionForSender = {
+    cardReceiverData.balance += data.sum;
+    const cardReceiver = await this._getModel().update(cardReceiverData);
+  
+    const transactionForSenderData = {
       cardId: cardSender.id,
       data: cardReceiver.cardNumber,
       type: 'card2Card',
       time: (new Date()).toISOString(),
-      sum: -data.amount,
+      sum: -data.sum,
     };
   
-    await this._getTransactionsModel().create(transactionForSender);
+    const transactionForSender = await this._getTransactionsModel().create(transactionForSenderData);
   
-    const transactionForReceiver = {
+    const transactionForReceiverData = {
       cardId: cardReceiver.id,
       data: cardSender.cardNumber,
       type: 'card2Card',
       time: (new Date()).toISOString(),
-      sum: data.amount,
+      sum: data.sum,
     };
   
-    await this._getTransactionsModel().create(transactionForReceiver);
+    const transactionForReceiver = await this._getTransactionsModel().create(transactionForReceiverData);
+    
+    return {
+      cards: [cardSender, cardReceiver],
+      transactions: [transactionForSender, transactionForReceiver],
+    };
   }
   
   /**

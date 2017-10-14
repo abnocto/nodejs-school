@@ -1,4 +1,4 @@
-import { copy } from './objectService';
+import { copy } from './reducersObjectService';
 
 export const stateFlags = {
   isPending: false,

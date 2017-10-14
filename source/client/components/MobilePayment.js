@@ -1,58 +1,37 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 import MobilePaymentContract from './MobilePaymentContract';
 import MobilePaymentResult from './MobilePaymentResult';
-import * as cardActions from '../actions/card';
+import { OFF } from '../constants/card';
 
-/**
- * Класс компонента MobilePayment
- */
-class MobilePayment extends Component {
-  repeatPayment() {
-    this.props.reset();
-  }
-  
-  /**
-   * Рендер компонента
-   *
-   * @override
-   * @returns {JSX}
-   */
-  render() {
-    const { activeCard, card, transaction } = this.props;
-    
-    if (card.payMode) {
-      return (
-        <MobilePaymentResult
-          card={card}
-          transaction={transaction}
-          repeatPayment={() => this.repeatPayment()}
-        />
-      );
-    }
-    
+const MobilePayment = ({ user, preparedActiveCard, mobilePaymentStatus, mobilePaymentTransactions, reset, pay }) => {
+  if (mobilePaymentStatus !== OFF) {
     return (
-      <MobilePaymentContract
-        activeCard={activeCard}
-        pay={this.props.pay}
+      <MobilePaymentResult
+        user={user}
+        mobilePaymentStatus={mobilePaymentStatus}
+        mobilePaymentTransactions={mobilePaymentTransactions}
+        reset={() => reset()}
       />
     );
   }
-}
-
-MobilePayment.propTypes = {
-  activeCard: PropTypes.shape({
-    id: PropTypes.number,
-    theme: PropTypes.object,
-  }).isRequired,
+  
+  return (
+    <MobilePaymentContract
+      user={user}
+      preparedActiveCard={preparedActiveCard}
+      pay={(cardId, data) => pay(cardId, data)}
+    />
+  );
 };
 
-export default connect(
-  state => ({
-    card: state.card,
-    transaction: state.transaction,
-  }),
-  dispatch => bindActionCreators(cardActions, dispatch),
-)(MobilePayment);
+MobilePayment.propTypes = {
+  user: PropTypes.object.isRequired,
+  preparedActiveCard: PropTypes.object.isRequired,
+  mobilePaymentStatus: PropTypes.string.isRequired,
+  mobilePaymentTransactions: PropTypes.array.isRequired,
+  reset: PropTypes.func.isRequired,
+  pay: PropTypes.func.isRequired,
+};
+
+export default MobilePayment;

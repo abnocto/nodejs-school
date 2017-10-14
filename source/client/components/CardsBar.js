@@ -36,36 +36,30 @@ const Footer = styled.footer`
   font-size: 15px;
 `;
 
-const CardsBar = ({ activeCardIndex, cardsList, onCardChange }) => {
-  const onCardClick = (activeCardIndex) => {
-    if (onCardChange) {
-      onCardChange(activeCardIndex);
-    }
-  };
-  
-  return (
-    <Layout>
-      <Logo />
-      <Edit />
-      <CardsList>
-        {cardsList.map((card, index) => (
+const CardsBar = ({ preparedActiveCard, preparedCardsList, onCardChange }) => (
+  <Layout>
+    <Logo />
+    <Edit />
+    <CardsList>
+      {
+        preparedCardsList.map(preparedCard => (
           <Card
-            key={index}
-            data={card}
-            active={index === activeCardIndex}
-            onClick={() => onCardClick(index)}
+            key={preparedCard.id}
+            data={preparedCard}
+            isActive={preparedCard.id === preparedActiveCard.id}
+            onClick={() => onCardChange(preparedCard.id)}
           />
-        ))}
-        <Card type='new' />
-      </CardsList>
-      <Footer>Yamoney Node School</Footer>
-    </Layout>
-  );
-};
+        ))
+      }
+      <Card type='new' />
+    </CardsList>
+    <Footer>Yamoney Node School</Footer>
+  </Layout>
+);
 
 CardsBar.propTypes = {
-  cardsList: PropTypes.array.isRequired,
-  activeCardIndex: PropTypes.number.isRequired,
+  preparedActiveCard: PropTypes.object.isRequired,
+  preparedCardsList: PropTypes.array.isRequired,
   onCardChange: PropTypes.func.isRequired,
 };
 

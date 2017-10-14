@@ -1,70 +1,42 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-
 import PrepaidContract from './PrepaidContract';
-import PrepaidSuccess from './PrepaidSuccess';
+import PrepaidResult from './PrepaidResult';
+import { OFF } from '../constants/card';
 
-/**
- * Класс компонента Prepaid
- */
-class Prepaid extends Component {
-  /**
-   * Конструктор
-   * @param {Object} props свойства компонента Prepaid
-   */
-  constructor(props) {
-    super(props);
-    
-    this.state = { stage: 'contract' };
-  }
-  
-  /**
-   * Обработка успешного платежа
-   * @param {Object} transaction данные о транзакции
-   */
-  onPaymentSuccess(transaction) {
-    this.setState({
-      stage: 'success',
-      transaction,
-    });
-  }
-  
-  /**
-   * Повторить платеж
-   */
-  repeatPayment() {
-    this.setState({ stage: 'contract' });
-  }
-  
-  /**
-   * Функция отрисовки компонента
-   * @returns {JSX}
-   */
-  render() {
-    const { transaction } = this.state;
-    const { activeCard, inactiveCardsList } = this.props;
-    
-    if (this.state.stage === 'success') {
-      return (
-        <PrepaidSuccess transaction={transaction} repeatPayment={() => this.repeatPayment()} />
-      );
-    }
-    
+const Prepaid = (props) => {
+  if (props.prepaidStatus !== OFF) {
     return (
-      <PrepaidContract
-        activeCard={activeCard}
-        inactiveCardsList={inactiveCardsList}
-        onPaymentSuccess={transaction => this.onPaymentSuccess(transaction)}
+      <PrepaidResult
+        user={props.user}
+        prepaidStatus={props.prepaidStatus}
+        prepaidTransactions={props.prepaidTransactions}
+        reset={() => props.reset()}
       />
     );
   }
-}
+  
+  return (
+    <PrepaidContract
+      preparedActiveCard={props.preparedActiveCard}
+      preparedPrepaidCard={props.preparedPrepaidCard}
+      preparedInactiveCardsList={props.preparedInactiveCardsList}
+      transfer={(cardId, data) => props.transfer(cardId, data)}
+      onCardChange={id => props.onCardChange(id)}
+    />
+  );
+};
 
 Prepaid.propTypes = {
-  activeCard: PropTypes.shape({
-    id: PropTypes.number,
-  }).isRequired,
-  inactiveCardsList: PropTypes.arrayOf(PropTypes.object).isRequired,
+  user: PropTypes.object.isRequired,
+  preparedActiveCard: PropTypes.object.isRequired,
+  preparedPrepaidCard: PropTypes.object.isRequired,
+  preparedInactiveCardsList: PropTypes.array.isRequired,
+  prepaidStatus: PropTypes.string.isRequired,
+  prepaidTransactions: PropTypes.array.isRequired,
+  reset: PropTypes.func.isRequired,
+  transfer: PropTypes.func.isRequired,
+  onCardChange: PropTypes.func.isRequired,
 };
 
 export default Prepaid;

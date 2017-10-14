@@ -1,8 +1,15 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import styled from 'emotion/react';
 import { injectGlobal } from 'emotion';
 import CardInfo from 'card-info';
+import * as cardActions from '../actions/card';
+import {
+  PAYMENT_MOBILE_MODE, WITHDRAW_CARD_MODE, PREPAID_CARD_MODE,
+  ACTIVE_CARD_ID_PROP, WITHDRAW_CARD_ID_PROP, PREPAID_CARD_ID_PROP,
+} from '../constants/card';
+import { PAYMENT_MOBILE_MODE_TRANSACTIONS, WITHDRAW_CARD_MODE_TRANSACTIONS, PREPAID_CARD_MODE_TRANSACTIONS } from '../constants/transaction';
 import {
   CardsBar,
   Header,
@@ -49,29 +56,24 @@ const Workspace = styled.div`
  */
 class App extends Component {
   /**
-   * Конструктор
+   * @param {String} type Card selection type
+   * @param {Number} id Card id
    */
-  constructor(props) {
-    super(props);
-    
-    this.state = {
-      activeCardIndex: 0,
-    };
+  onCardChange(type, id) {
+    const { cardState } = this.props;
+    if (id === cardState[type]) return;
+    cardState[type] = id;
+    if (type === ACTIVE_CARD_ID_PROP) {
+      const inactiveKey = cardState.keys.find(key => key !== id) || -1;
+      if (id === cardState[WITHDRAW_CARD_ID_PROP]) cardState[WITHDRAW_CARD_ID_PROP] = inactiveKey;
+      if (id === cardState[PREPAID_CARD_ID_PROP]) cardState[PREPAID_CARD_ID_PROP] = inactiveKey;
+      [PAYMENT_MOBILE_MODE, WITHDRAW_CARD_MODE, PREPAID_CARD_MODE].forEach(mode => this.props.cardActions.reset(mode));
+    }
+    this.props.cardActions.setActive(cardState[ACTIVE_CARD_ID_PROP], cardState[WITHDRAW_CARD_ID_PROP], cardState[PREPAID_CARD_ID_PROP]);
   }
   
   /**
-   * Обработчик переключения карты
-   *
-   * @param {Number} activeCardIndex индекс выбранной карты
-   */
-  onCardChange(activeCardIndex) {
-    this.setState({ activeCardIndex });
-  }
-  
-  /**
-   * Подготавливает данные карт
-   *
-   * @param {Object} cardsData данные карт
+   * @param {Object} cardsData
    * @returns {Object[]}
    */
   prepareCardsData(cardsData) {
@@ -97,50 +99,72 @@ class App extends Component {
     });
   }
   
-  /**
-   * Рендер компонента
-   *
-   * @override
-   * @returns {JSX}
-   */
   render() {
-    const { card, transaction } = this.props;
+    const { userState, cardState, transactionState } = this.props;
+    const { pay, reset, transfer } = this.props.cardActions;
+    
+    const cardsList = cardState.keys.map(id => cardState.byId[id]);
+    const preparedCardsList = this.prepareCardsData(cardsList);
+    
+    const preparedInactiveCardsList = preparedCardsList.filter(card => card.id === cardState[ACTIVE_CARD_ID_PROP] ? false : card);
+    
+    const preparedActiveCard = (cardState[ACTIVE_CARD_ID_PROP] !== -1) ? preparedCardsList.find(card => card.id === cardState[ACTIVE_CARD_ID_PROP]) : null;
+    const preparedWithdrawCard = (cardState[WITHDRAW_CARD_ID_PROP] !== -1) ? preparedCardsList.find(card => card.id === cardState[WITHDRAW_CARD_ID_PROP]) : null;
+    const preparedPrepaidCard = (cardState[PREPAID_CARD_ID_PROP] !== -1) ? preparedCardsList.find(card => card.id === cardState[PREPAID_CARD_ID_PROP]) : null;
   
-    const cardsData = card.keys.map(id => card.byId[id]);
-    const transactionsData = transaction.keys.map(id => transaction.byId[id]);
-  
-    const cardsList = this.prepareCardsData(cardsData);
-    const cardHistory = transactionsData.map((data) => {
-      const card = cardsList.find(card => card.id === data.cardId);
+    const transactionsList = transactionState.keys.map(id => transactionState.byId[id]);
+    const preparedTransactionsList = transactionsList.map((data) => {
+      const card = preparedCardsList.find(card => card.id === data.cardId);
       return card ? Object.assign({}, data, { card }) : data;
     });
     
-    const { activeCardIndex } = this.state;
-    const activeCard = cardsList[activeCardIndex];
-    
-    const inactiveCardsList = cardsList.filter((card, index) => index === activeCardIndex ? false : card);
-    const filteredHistory = cardHistory.filter(data => data.cardId === activeCard.id);
+    const preparedActiveCardTransactionsList = preparedTransactionsList.filter(data => data.cardId === cardState[ACTIVE_CARD_ID_PROP]);
     
     return (
       <Wallet>
         <CardsBar
-          activeCardIndex={activeCardIndex}
-          cardsList={cardsList}
-          onCardChange={activeCardIndex => this.onCardChange(activeCardIndex)}
+          preparedActiveCard={preparedActiveCard}
+          preparedCardsList={preparedCardsList}
+          onCardChange={id => this.onCardChange(ACTIVE_CARD_ID_PROP, id)}
         />
         <CardPane>
-          <Header activeCard={activeCard} />
+          <Header
+            user={userState}
+            preparedActiveCard={preparedActiveCard}
+          />
           <Workspace>
-            <History cardHistory={filteredHistory} />
-            <Prepaid
-              activeCard={activeCard}
-              inactiveCardsList={inactiveCardsList}
-              onCardChange={newActiveCardIndex => this.onCardChange(newActiveCardIndex)}
+            <History
+              cardHistory={preparedActiveCardTransactionsList}
             />
-            <MobilePayment activeCard={activeCard} />
+            <Prepaid
+              user={userState}
+              preparedActiveCard={preparedActiveCard}
+              preparedPrepaidCard={preparedPrepaidCard}
+              preparedInactiveCardsList={preparedInactiveCardsList}
+              prepaidStatus={cardState[PREPAID_CARD_MODE]}
+              prepaidTransactions={transactionState[PREPAID_CARD_MODE_TRANSACTIONS]}
+              reset={() => reset(PREPAID_CARD_MODE)}
+              transfer={(cardId, data) => transfer(PREPAID_CARD_MODE, cardId, data)}
+              onCardChange={id => this.onCardChange(PREPAID_CARD_ID_PROP, id)}
+            />
+            <MobilePayment
+              user={userState}
+              preparedActiveCard={preparedActiveCard}
+              mobilePaymentStatus={cardState[PAYMENT_MOBILE_MODE]}
+              mobilePaymentTransactions={transactionState[PAYMENT_MOBILE_MODE_TRANSACTIONS]}
+              reset={() => reset(PAYMENT_MOBILE_MODE)}
+              pay={(cardId, data) => pay(PAYMENT_MOBILE_MODE, cardId, data)}
+            />
             <Withdraw
-              activeCard={activeCard}
-              inactiveCardsList={inactiveCardsList}
+              user={userState}
+              preparedActiveCard={preparedActiveCard}
+              preparedWithdrawCard={preparedWithdrawCard}
+              preparedInactiveCardsList={preparedInactiveCardsList}
+              withdrawStatus={cardState[WITHDRAW_CARD_MODE]}
+              withdrawTransactions={transactionState[WITHDRAW_CARD_MODE_TRANSACTIONS]}
+              reset={() => reset(WITHDRAW_CARD_MODE)}
+              transfer={(cardId, data) => transfer(WITHDRAW_CARD_MODE, cardId, data)}
+              onCardChange={id => this.onCardChange(WITHDRAW_CARD_ID_PROP, id)}
             />
           </Workspace>
         </CardPane>
@@ -151,9 +175,11 @@ class App extends Component {
 
 export default connect(
   state => ({
-    user: state.user,
-    card: state.card,
-    transaction: state.transaction,
+    userState: state.user,
+    cardState: state.card,
+    transactionState: state.transaction,
   }),
-  null,
+  dispatch => ({
+    cardActions: bindActionCreators(cardActions, dispatch),
+  }),
 )(App);

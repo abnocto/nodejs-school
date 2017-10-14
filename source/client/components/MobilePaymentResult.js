@@ -1,7 +1,8 @@
 import React from 'react';
 import styled from 'emotion/react';
 import PropTypes from 'prop-types';
-
+import { PENDING, FORBIDDEN, ERROR } from '../constants/card';
+import { MOBILE_PAYMENT_COMISSION } from '../constants/util';
 import { Island } from './';
 
 const MobilePaymentLayout = styled(Island)`
@@ -84,60 +85,67 @@ const Warning = styled.div`
   text-align: center;
 `;
 
-const MobilePaymentSuccess = ({ card, transaction, repeatPayment }) => {
-  const { payMode } = card;
-  const { payTransaction } = transaction;
-  const commissionHardCode = 3;
+const MobilePaymentResult = ({ user, mobilePaymentStatus, mobilePaymentTransactions, reset }) => {
+  const commission = Number(MOBILE_PAYMENT_COMISSION);
+  const { email } = user;
+  const [senderTransaction] = mobilePaymentTransactions;
   
-  switch (payMode) {
-    case 'pending': return (
+  switch (mobilePaymentStatus) {
+    case PENDING: return (
       <MobilePaymentLayout>
         <Warning>Обработка запроса...</Warning>
       </MobilePaymentLayout>
     );
     
-    case 'forbidden': return (
+    case FORBIDDEN: return (
       <MobileFailedPaymentLayout>
         <Warning>Ошибка: Недостаточно средств</Warning>
-        <RepeatPayment onClick={repeatPayment}>Отправить еще один перевод</RepeatPayment>
       </MobileFailedPaymentLayout>
     );
     
-    case 'error': return (
+    case ERROR: return (
       <MobileFailedPaymentLayout>
         <Warning>Ошибка на сервере...</Warning>
-        <RepeatPayment onClick={repeatPayment}>Отправить еще один перевод</RepeatPayment>
       </MobileFailedPaymentLayout>
     );
     
-    case 'success':
     default: return (
       <MobilePaymentLayout>
         <SuccessIcon />
         <Header>МегаФон (Россия)</Header>
-        <Sum>{-payTransaction.sum} ₽</Sum>
-        <CommissionTips>В том числе комиссия {commissionHardCode} ₽</CommissionTips>
+        <Sum>{Math.abs(senderTransaction.sum)} ₽</Sum>
+        <CommissionTips>В том числе комиссия {commission} ₽</CommissionTips>
         <Section>
           <SectionLabel>Ид транзакции</SectionLabel>
-          <SectionValue>{payTransaction.id}</SectionValue>
+          <SectionValue>{senderTransaction.id}</SectionValue>
         </Section>
         <Section>
           <SectionLabel>Номер телефона</SectionLabel>
-          <SectionValue>{payTransaction.data}</SectionValue>
+          <SectionValue>{senderTransaction.data}</SectionValue>
         </Section>
-        <Instruction>
-          Мы пришлем чек на sam@yandex.ru. Вы можете изменить email в «Настройках».
-        </Instruction>
-        <RepeatPayment onClick={repeatPayment}>Отправить еще один перевод</RepeatPayment>
+        { email
+          ? (
+            <Instruction>
+              Мы пришлем чек на {email}. Вы можете изменить email в «Настройках».
+            </Instruction>
+          )
+          : (
+            <Instruction>
+            Для получения данных транзакции укажите email в «Настройках».
+            </Instruction>
+          )
+        }
+        <RepeatPayment onClick={() => reset()}>Отправить еще один перевод</RepeatPayment>
       </MobilePaymentLayout>
     );
   }
 };
 
-MobilePaymentSuccess.propTypes = {
-  card: PropTypes.object.isRequired,
-  transaction: PropTypes.object.isRequired,
-  repeatPayment: PropTypes.func.isRequired,
+MobilePaymentResult.propTypes = {
+  user: PropTypes.object.isRequired,
+  mobilePaymentStatus: PropTypes.string.isRequired,
+  mobilePaymentTransactions: PropTypes.array.isRequired,
+  reset: PropTypes.func.isRequired,
 };
 
-export default MobilePaymentSuccess;
+export default MobilePaymentResult;

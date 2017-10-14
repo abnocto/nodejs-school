@@ -1,20 +1,21 @@
 const { renderToStaticMarkup } = require('react-dom/server');
 const indexView = require('../views');
-const { read } = require('../client/service/objectService');
+const { readCards } = require('../client/reducers/card');
+const { readTransactions } = require('../client/reducers/transaction');
 
 module.exports = async (ctx) => {
   const cards = await ctx.CardsService.getAll();
-  
-  let transactions = [];
-  if (cards[0]) transactions = await ctx.TransactionsService.getBy('cardId', cards[0].id);
+  const transactions = await ctx.TransactionsService.getAll();
   
   const data = {
     user: {
       login: 'samuel_johnson',
       name: 'Samuel Johnson',
+      phoneNumber: '+79218908064',
+      email: 'samueljohnson@yandex.ru',
     },
-    card: read({}, cards),
-    transaction: read({}, transactions),
+    card: readCards({}, cards),
+    transaction: readTransactions({}, transactions),
   };
   
   ctx.body = renderToStaticMarkup(indexView(data));

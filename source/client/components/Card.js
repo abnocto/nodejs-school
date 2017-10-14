@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'emotion/react';
 import { Select } from './';
@@ -53,86 +53,53 @@ const CardSelect = styled(Select)`
   margin-bottom: 15px;
 `;
 
-/**
- * Карта
- */
-class Card extends Component {
-  /**
-   * Конструктор
-   *
-   * @param {Object} props свойства компонента
-   */
-  constructor(props) {
-    super(props);
-    
-    this.state = {
-      activeCardIndex: 0,
-    };
+const Card = ({ data, isActive, type, onClick, preparedWithdrawCard, onWithdrawCardSelect }) => {
+  if (type === 'new') {
+    return (
+      <NewCardLayout />
+    );
   }
   
-  /**
-   * Обработчик переключения карты
-   *
-   * @param {Number} activeCardIndex индекс выбранной карты
-   */
-  onCardChange(activeCardIndex) {
-    this.setState({ activeCardIndex });
-  }
-  
-  /**
-   * Рендер компонента
-   *
-   * @override
-   * @returns {JSX}
-   */
-  render() {
-    const { data, type, active, onClick } = this.props;
-    
-    if (type === 'new') {
-      return (
-        <NewCardLayout />
-      );
-    }
-    
-    if (type === 'select') {
-      const { activeCardIndex } = this.state;
-      const selectedCard = data[activeCardIndex];
-      const { bgColor, bankLogoUrl, brandLogoUrl } = selectedCard.theme;
-      
-      return (
-        <CardLayout active={true} bgColor={bgColor}>
-          <CardLogo url={bankLogoUrl} active={true} />
-          <CardSelect defaultValue='0' onChange={activeCardIndex => this.onCardChange(activeCardIndex)}>
-            {data.map((card, index) => (
-              <Select.Option key={index} value={`${index}`}>{card.number}</Select.Option>
-            ))}
-          </CardSelect>
-          <CardType url={brandLogoUrl} active={true} />
-        </CardLayout>
-      );
-    }
-    
-    const { number, theme } = data;
-    const { bgColor, textColor, bankLogoUrl, brandLogoUrl } = theme;
-    const themedBrandLogoUrl = active ? brandLogoUrl : brandLogoUrl.replace(/-colored.svg$/, '-white.svg');
+  if (type === 'select') {
+    const { bgColor, bankLogoUrl, brandLogoUrl } = preparedWithdrawCard.theme;
     
     return (
-      <CardLayout active={active} bgColor={bgColor} onClick={onClick}>
-        <CardLogo url={bankLogoUrl} active={active} />
-        <CardNumber textColor={textColor} active={active}>
-          {number}
-        </CardNumber>
-        <CardType url={themedBrandLogoUrl} active={active} />
+      <CardLayout active={true} bgColor={bgColor}>
+        <CardLogo url={bankLogoUrl} active={true} />
+        <CardSelect value={`${preparedWithdrawCard.id}`} onChange={id => onWithdrawCardSelect(Number(id))}>
+          {
+            data.map((preparedCard, index) => (
+              <Select.Option key={index} value={`${preparedCard.id}`}>{preparedCard.number}</Select.Option>
+            ))
+          }
+        </CardSelect>
+        <CardType url={brandLogoUrl} active={true} />
       </CardLayout>
     );
   }
-}
+  
+  const { number, theme } = data;
+  const { bgColor, textColor, bankLogoUrl, brandLogoUrl } = theme;
+  const themedBrandLogoUrl = isActive ? brandLogoUrl : brandLogoUrl.replace(/-colored.svg$/, '-white.svg');
+  
+  return (
+    <CardLayout active={isActive} bgColor={bgColor} onClick={onClick}>
+      <CardLogo url={bankLogoUrl} active={isActive} />
+      <CardNumber textColor={textColor} active={isActive}>
+        {number}
+      </CardNumber>
+      <CardType url={themedBrandLogoUrl} active={isActive} />
+    </CardLayout>
+  );
+};
 
 Card.propTypes = {
   data: PropTypes.oneOfType([PropTypes.array, PropTypes.object]),
-  type: PropTypes.string,
-  active: PropTypes.bool,
+  isActive: PropTypes.bool,
   onClick: PropTypes.func,
+  type: PropTypes.string,
+  preparedWithdrawCard: PropTypes.object,
+  onWithdrawCardSelect: PropTypes.func,
 };
 
 export default Card;
