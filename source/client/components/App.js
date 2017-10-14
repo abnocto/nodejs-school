@@ -74,7 +74,7 @@ class App extends Component {
     
     const preparedCardsList = cardState.keys.map(id => prepareCardData(cardState.byId[id]));
     const preparedActiveCard = (cardState[ACTIVE_CARD_ID_PROP] !== -1) ? preparedCardsList.find(card => card.id === cardState[ACTIVE_CARD_ID_PROP]) : null;
-  
+    
     const transactionsList = transactionState.keys.map(id => transactionState.byId[id]);
     const preparedTransactionsList = transactionsList.map((data) => {
       const card = preparedCardsList.find(card => card.id === data.cardId);
@@ -82,6 +82,8 @@ class App extends Component {
     });
     
     const preparedActiveCardTransactionsList = preparedTransactionsList.filter(data => data.cardId === cardState[ACTIVE_CARD_ID_PROP]);
+    
+    const modes = [[PREPAID_CARD_MODE, PREPAID_CARD_ID_PROP], [PAYMENT_MOBILE_MODE], [WITHDRAW_CARD_MODE, WITHDRAW_CARD_ID_PROP]];
     
     return (
       <Wallet>
@@ -99,29 +101,19 @@ class App extends Component {
             <History
               cardHistory={preparedActiveCardTransactionsList}
             />
-            <CardMode
-              mode={PREPAID_CARD_MODE}
-              userState={userState}
-              cardState={cardState}
-              transactionState={transactionState}
-              cardActions={this.props.cardActions}
-              onCardChange={id => this.onCardChange(PREPAID_CARD_ID_PROP, id)}
-            />
-            <CardMode
-              mode={PAYMENT_MOBILE_MODE}
-              userState={userState}
-              cardState={cardState}
-              transactionState={transactionState}
-              cardActions={this.props.cardActions}
-            />
-            <CardMode
-              mode={WITHDRAW_CARD_MODE}
-              userState={userState}
-              cardState={cardState}
-              transactionState={transactionState}
-              cardActions={this.props.cardActions}
-              onCardChange={id => this.onCardChange(WITHDRAW_CARD_ID_PROP, id)}
-            />
+            {
+              modes.map((mode, index) => (
+                <CardMode
+                  key={index}
+                  mode={mode[0]}
+                  userState={userState}
+                  cardState={cardState}
+                  transactionState={transactionState}
+                  cardActions={this.props.cardActions}
+                  onCardChange={id => this.onCardChange(mode[1], id)}
+                />
+              ))
+            }
           </Workspace>
         </CardPane>
       </Wallet>
