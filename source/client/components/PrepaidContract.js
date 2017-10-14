@@ -84,7 +84,7 @@ class PrepaidContract extends Component {
   handleSumChange(event) {
     if (!event) return;
     this.setState({
-      sum: getValidSum(event.target.value, this.props.preparedPrepaidCard.balance),
+      sum: getValidSum(event.target.value, this.props.preparedModeCard.balance),
     });
   }
   
@@ -95,7 +95,7 @@ class PrepaidContract extends Component {
     if (event) event.preventDefault();
     const { sum } = this.state;
     if (sum < 1) return;
-    const { id } = this.props.preparedPrepaidCard;
+    const { id } = this.props.preparedModeCard;
     const data = {
       receiverCardId: this.props.preparedActiveCard.id,
       sum,
@@ -104,7 +104,7 @@ class PrepaidContract extends Component {
   }
   
   render() {
-    const { preparedInactiveCardsList, preparedPrepaidCard, onCardChange } = this.props;
+    const { preparedInactiveCardsList, preparedModeCard, onCardChange } = this.props;
     return (
       <form onSubmit={event => this.handleSubmit(event)}>
         <PrepaidLayout>
@@ -116,20 +116,20 @@ class PrepaidContract extends Component {
                   bgColor={card.theme.bgColor}
                   key={card.id}
                   onClick={() => onCardChange(card.id)}
-                  selected={preparedPrepaidCard.id === card.id}
+                  selected={preparedModeCard.id === card.id}
                 >
                   <PrepaidItemIcon
                     bankSmLogoUrl={card.theme.bankSmLogoUrl}
-                    selected={preparedPrepaidCard.id === card.id}
+                    selected={preparedModeCard.id === card.id}
                   />
                   <PrepaidItemTitle
                     textColor={card.theme.textColor}
-                    selected={preparedPrepaidCard.id === card.id}
+                    selected={preparedModeCard.id === card.id}
                   >
                     C банковской карты
                     <PrepaidItemDescription
                       textColor={card.theme.textColor}
-                      selected={preparedPrepaidCard.id === card.id}
+                      selected={preparedModeCard.id === card.id}
                     >
                       {card.number}
                     </PrepaidItemDescription>
@@ -148,8 +148,8 @@ class PrepaidContract extends Component {
           </InputField>
           <Button
             type='submit'
-            bgColor={preparedPrepaidCard.theme.bgColor}
-            textColor={preparedPrepaidCard.theme.textColor}
+            bgColor={preparedModeCard.theme.bgColor}
+            textColor={preparedModeCard.theme.textColor}
           >
             Пополнить
           </Button>
@@ -161,7 +161,7 @@ class PrepaidContract extends Component {
 
 PrepaidContract.propTypes = {
   preparedActiveCard: PropTypes.object.isRequired,
-  preparedPrepaidCard: PropTypes.object.isRequired,
+  preparedModeCard: PropTypes.object.isRequired,
   preparedInactiveCardsList: PropTypes.array.isRequired,
   transfer: PropTypes.func.isRequired,
   onCardChange: PropTypes.func.isRequired,

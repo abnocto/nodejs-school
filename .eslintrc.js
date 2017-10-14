@@ -28,6 +28,7 @@ module.exports = {
   
   rules: {
     'class-methods-use-this': 'off',
+    'default-case': 'off',
     'jsx-quotes': ['error', 'prefer-single'],
     'max-len': 'off',
     'no-alert': 'warn',
@@ -44,6 +45,7 @@ module.exports = {
     'no-unused-vars': 'warn',
     'import/prefer-default-export': 'off',
     'import/no-extraneous-dependencies': ['error', { devDependencies: true },],
+    'padded-blocks': 'warn',
     'prefer-const': 'off',
     'react/jsx-boolean-value': ['error', 'always'],
     'react/jsx-filename-extension': ['error', { 'extensions': ['.js', '.jsx'] }],

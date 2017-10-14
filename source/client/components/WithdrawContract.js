@@ -61,7 +61,7 @@ class WithdrawContract extends Component {
     if (sum < 1) return;
     const { id } = this.props.preparedActiveCard;
     const data = {
-      receiverCardId: this.props.preparedWithdrawCard.id,
+      receiverCardId: this.props.preparedModeCard.id,
       sum,
     };
     this.props.transfer(id, data);
@@ -72,7 +72,7 @@ class WithdrawContract extends Component {
    * @returns {JSX}
    */
   render() {
-    const { preparedInactiveCardsList, preparedWithdrawCard, onCardChange } = this.props;
+    const { preparedInactiveCardsList, preparedModeCard, onCardChange } = this.props;
     
     return (
       <form onSubmit={event => this.handleSubmit(event)}>
@@ -81,8 +81,8 @@ class WithdrawContract extends Component {
           <Card
             type='select'
             data={preparedInactiveCardsList}
-            preparedWithdrawCard={preparedWithdrawCard}
-            onWithdrawCardSelect={id => onCardChange(id)}
+            preparedModeCard={preparedModeCard}
+            onModeCardSelect={id => onCardChange(id)}
           />
           <InputField>
             <SumInput
@@ -101,7 +101,7 @@ class WithdrawContract extends Component {
 
 WithdrawContract.propTypes = {
   preparedActiveCard: PropTypes.object.isRequired,
-  preparedWithdrawCard: PropTypes.object.isRequired,
+  preparedModeCard: PropTypes.object.isRequired,
   preparedInactiveCardsList: PropTypes.array.isRequired,
   transfer: PropTypes.func.isRequired,
   onCardChange: PropTypes.func.isRequired,

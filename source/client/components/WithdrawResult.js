@@ -76,11 +76,11 @@ const Underline = styled.div`
   background-color: rgba(0, 0, 0, 0.16);
 `;
 
-const WithdrawResult = ({ user, withdrawStatus, withdrawTransactions, reset }) => {
+const WithdrawResult = ({ user, modeStatus, modeTransactions, reset }) => {
   const { email } = user;
-  const [senderTransaction, receiverTransaction] = withdrawTransactions;
+  const [senderTransaction, receiverTransaction] = modeTransactions;
   
-  switch (withdrawStatus) {
+  switch (modeStatus) {
     case PENDING:
       return (
         <WithdrawLayoutPending>
@@ -135,8 +135,8 @@ const WithdrawResult = ({ user, withdrawStatus, withdrawTransactions, reset }) =
 
 WithdrawResult.propTypes = {
   user: PropTypes.object.isRequired,
-  withdrawStatus: PropTypes.string.isRequired,
-  withdrawTransactions: PropTypes.array.isRequired,
+  modeStatus: PropTypes.string.isRequired,
+  modeTransactions: PropTypes.array.isRequired,
   reset: PropTypes.func.isRequired,
 };
 

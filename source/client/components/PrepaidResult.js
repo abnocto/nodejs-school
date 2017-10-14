@@ -29,9 +29,7 @@ const CheckIcon = styled.div`
   height: 80px;
   background-image: url(/assets/round-check.svg);
   background-size: contain;
-  position: absolute;
-  bottom: 125px;
-  right: 135px;
+  margin: 25px auto;
 `;
 
 const Header = styled(Title)`
@@ -60,7 +58,6 @@ const Instruction = styled.div`
 
 const Underline = styled.div`
   height: 1px;
-  margin-bottom: 20px;
   background-color: rgba(0, 0, 0, 0.16);
 `;
 
@@ -87,11 +84,11 @@ const Warning = styled.div`
   text-align: center;
 `;
 
-const PrepaidResult = ({ user, prepaidStatus, prepaidTransactions, reset }) => {
+const PrepaidResult = ({ user, modeStatus, modeTransactions, reset }) => {
   const { email } = user;
-  const [senderTransaction, receiverTransaction] = prepaidTransactions;
+  const [senderTransaction, receiverTransaction] = modeTransactions;
   
-  switch (prepaidStatus) {
+  switch (modeStatus) {
     case PENDING:
       return (
         <PrepaidLayoutPending>
@@ -116,7 +113,6 @@ const PrepaidResult = ({ user, prepaidStatus, prepaidTransactions, reset }) => {
     default:
       return (
         <PrepaidLayout>
-          <CheckIcon />
           <Header>Операция выполнена</Header>
           <Section>
             <SectionLabel>Данные транзакции отправителя:</SectionLabel>
@@ -127,6 +123,7 @@ const PrepaidResult = ({ user, prepaidStatus, prepaidTransactions, reset }) => {
             <SectionValue>{`Ид: ${receiverTransaction.id}, Карта: ${receiverTransaction.data}, Сумма: ${receiverTransaction.sum}`}</SectionValue>
           </Section>
           <Underline />
+          <CheckIcon />
           {email
             ? (
               <Instruction>
@@ -147,8 +144,8 @@ const PrepaidResult = ({ user, prepaidStatus, prepaidTransactions, reset }) => {
 
 PrepaidResult.propTypes = {
   user: PropTypes.object.isRequired,
-  prepaidStatus: PropTypes.string.isRequired,
-  prepaidTransactions: PropTypes.array.isRequired,
+  modeStatus: PropTypes.string.isRequired,
+  modeTransactions: PropTypes.array.isRequired,
   reset: PropTypes.func.isRequired,
 };
 

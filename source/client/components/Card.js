@@ -53,7 +53,7 @@ const CardSelect = styled(Select)`
   margin-bottom: 15px;
 `;
 
-const Card = ({ data, isActive, type, onClick, preparedWithdrawCard, onWithdrawCardSelect }) => {
+const Card = ({ data, isActive, type, onClick, preparedModeCard, onModeCardSelect }) => {
   if (type === 'new') {
     return (
       <NewCardLayout />
@@ -61,12 +61,12 @@ const Card = ({ data, isActive, type, onClick, preparedWithdrawCard, onWithdrawC
   }
   
   if (type === 'select') {
-    const { bgColor, bankLogoUrl, brandLogoUrl } = preparedWithdrawCard.theme;
+    const { bgColor, bankLogoUrl, brandLogoUrl } = preparedModeCard.theme;
     
     return (
       <CardLayout active={true} bgColor={bgColor}>
         <CardLogo url={bankLogoUrl} active={true} />
-        <CardSelect value={`${preparedWithdrawCard.id}`} onChange={id => onWithdrawCardSelect(Number(id))}>
+        <CardSelect value={`${preparedModeCard.id}`} onChange={id => onModeCardSelect(Number(id))}>
           {
             data.map((preparedCard, index) => (
               <Select.Option key={index} value={`${preparedCard.id}`}>{preparedCard.number}</Select.Option>
@@ -98,8 +98,8 @@ Card.propTypes = {
   isActive: PropTypes.bool,
   onClick: PropTypes.func,
   type: PropTypes.string,
-  preparedWithdrawCard: PropTypes.object,
-  onWithdrawCardSelect: PropTypes.func,
+  preparedModeCard: PropTypes.object,
+  onModeCardSelect: PropTypes.func,
 };
 
 export default Card;

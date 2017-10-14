@@ -85,12 +85,12 @@ const Warning = styled.div`
   text-align: center;
 `;
 
-const MobilePaymentResult = ({ user, mobilePaymentStatus, mobilePaymentTransactions, reset }) => {
+const MobilePaymentResult = ({ user, modeStatus, modeTransactions, reset }) => {
   const commission = Number(MOBILE_PAYMENT_COMISSION);
   const { email } = user;
-  const [senderTransaction] = mobilePaymentTransactions;
+  const [senderTransaction] = modeTransactions;
   
-  switch (mobilePaymentStatus) {
+  switch (modeStatus) {
     case PENDING: return (
       <MobilePaymentLayout>
         <Warning>Обработка запроса...</Warning>
@@ -143,8 +143,8 @@ const MobilePaymentResult = ({ user, mobilePaymentStatus, mobilePaymentTransacti
 
 MobilePaymentResult.propTypes = {
   user: PropTypes.object.isRequired,
-  mobilePaymentStatus: PropTypes.string.isRequired,
-  mobilePaymentTransactions: PropTypes.array.isRequired,
+  modeStatus: PropTypes.string.isRequired,
+  modeTransactions: PropTypes.array.isRequired,
   reset: PropTypes.func.isRequired,
 };
 
