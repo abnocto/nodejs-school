@@ -37,7 +37,7 @@ app.use(async (ctx, next) => {
   }
 });
 
-// add file models as context props
+// add services as context props
 app.use(async (ctx, next) => {
   ctx.CardsService = new CardsService();
   ctx.TransactionsService = new TransactionsService();

@@ -4,7 +4,7 @@ const objects = [
   { cardNumber: '4058700000000008', balance: 700, id: 3 },
 ];
 
-class CardsModel {
+class CardsService {
   
   async getAll() {
     return Promise.resolve(objects);
@@ -18,18 +18,28 @@ class CardsModel {
     return Promise.resolve(objects.filter(object => object[key] === value));
   }
   
-  async create(data) {
-    return Promise.resolve(data);
-  }
-  
-  async update(data) {
-    return Promise.resolve(data);
-  }
-  
   async remove(id) {
     return Promise.resolve();
   }
   
+  async create(data) {
+    return Promise.resolve(data);
+  }
+  
+  async mobile(id, data, mode) {
+    return Promise.resolve({
+      cards: [{}],
+      transactions: [{}],
+    });
+  }
+  
+  async transfer(id, data) {
+    return Promise.resolve({
+      cards: [{}, {}],
+      transactions: [{}, {}],
+    });
+  }
+  
 }
 
-module.exports = CardsModel;
+module.exports = CardsService;

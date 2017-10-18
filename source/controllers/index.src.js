@@ -18,5 +18,6 @@ module.exports = async (ctx) => {
     transaction: readTransactions({}, transactions),
   };
   
+  ctx.status = 200;
   ctx.body = renderToStaticMarkup(indexView(data));
 };
