@@ -32,21 +32,21 @@ class Service {
   }
   
   /**
-   * Returns objects by Foreign key (property name and id)
-   * @param {String} name Property name
-   * @param {Number} id Foreign key (id)
-   * @returns {Promise.<Array>}
+   * Returns objects list filtered by key and value
+   * @param {String} key Property key
+   * @param {String|Number} value
+   * @returns {Promise}
    */
-  async getBy(name, id) {
-    if (typeof name !== 'string') {
-      throw new AppError(400, 'Bad request: Name must be a string');
+  async getBy(key, value) {
+    if (typeof key !== 'string') {
+      throw new AppError(400, 'Bad request: Key must be a string');
     }
   
-    if (!Number.isInteger(id) || id <= 0) {
-      throw new AppError(400, 'Bad request: Id must be a positive integer');
+    if (typeof value !== 'string' || typeof value !== 'number') {
+      throw new AppError(400, 'Bad request: Value must be a string or a number');
     }
   
-    return await this._getModel().getBy(name, id);
+    return await this._getModel().getBy(key, value);
   }
   
   /**

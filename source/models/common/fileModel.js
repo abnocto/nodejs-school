@@ -29,14 +29,14 @@ class FileModel extends Model {
   }
 
   /**
-   * Returns file objects by Foreign key (property name and id)
-   * @param {String} name Property name
-   * @param {Number} id Foreign key (id)
+   * Returns file objects list filtered by key and value
+   * @param {String} key Property key
+   * @param {String|Number} value
    * @returns {Promise.<Array>}
    */
-  async getBy(name, id) {
+  async getBy(key, value) {
     const objects = await this._readFile();
-    return objects.filter(_object => _object[name] === id);
+    return objects.filter(_object => _object[key] === value);
   }
 
   /**
@@ -47,8 +47,10 @@ class FileModel extends Model {
   async remove(id) {
     const objects = await this._readFile();
     const objectIndex = objects.findIndex(_object => _object.id === id);
-    objects.splice(objectIndex, 1);
-    await this._writeFile();
+    if (objectIndex !== -1) {
+      objects.splice(objectIndex, 1);
+      await this._writeFile();
+    }
   }
   
   /**
@@ -76,8 +78,10 @@ class FileModel extends Model {
   async update(object) {
     const objects = await this._readFile();
     const objectIndex = objects.findIndex(_object => _object.id === object.id);
-    objects.splice(objectIndex, 1, object);
-    await this._writeFile();
+    if (objectIndex !== -1) {
+      objects.splice(objectIndex, 1, object);
+      await this._writeFile();
+    }
     return object;
   }
 
@@ -87,7 +91,9 @@ class FileModel extends Model {
    */
   _readFile() {
     return new Promise((resolve, reject) => {
-      if (this._dataSource) resolve(this._dataSource);
+      if (this._dataSource) {
+        return resolve(this._dataSource);
+      }
       fs.readFile(this._dataSourceFilePath, (err, dataJSON) => {
         if (err) {
           reject(err);

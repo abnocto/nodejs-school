@@ -11,14 +11,14 @@ class Model {
    * @returns {Promise}
    */
   async get(id) {}
-
+  
   /**
-   * Returns objects by Foreign key (property name and id)
-   * @param {String} name Property name
-   * @param {Number} id Foreign key (id)
+   * Returns file objects list filtered by key and value
+   * @param {String} key Property key
+   * @param {String|Number} value
    * @returns {Promise}
    */
-  async getBy(name, id) {}
+  async getBy(key, value) {}
 
   /**
    * Creates new object by data
