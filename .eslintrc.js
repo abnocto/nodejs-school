@@ -28,6 +28,7 @@ module.exports = {
   },
   
   rules: {
+    'arrow-body-style': 'warn',
     'consistent-return': 'warn',
     'class-methods-use-this': 'off',
     'default-case': 'off',
@@ -37,6 +38,7 @@ module.exports = {
     'no-confusing-arrow': 'off',
     'no-console': 'error',
     'no-empty-function': 'off',
+    'no-mixed-operators': 'off',
     'no-param-reassign': 'warn',
     'no-return-await': 'off',
     'no-return-assign': 'off',

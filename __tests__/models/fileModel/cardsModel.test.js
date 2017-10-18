@@ -1,5 +1,5 @@
 const fs = require('fs');
-const CardsModel = require('../source/models/cardsModel');
+const CardsModel = require('../../../source/models/cardsModel');
 
 const cardsModel = new CardsModel();
 
@@ -18,7 +18,7 @@ fs.writeFile = jest.fn((path, dataJSON, callback) => {
   callback(null);
 });
 
-describe('File Model tests (general tests with cardsModel)', () => {
+describe('File Model, File Model / Cards Model', () => {
   
   test('getAll()', () => expect(cardsModel.getAll()).resolves.toEqual(cards));
   

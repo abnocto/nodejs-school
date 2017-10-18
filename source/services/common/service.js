@@ -42,7 +42,7 @@ class Service {
       throw new AppError(400, 'Bad request: Key must be a string');
     }
   
-    if (typeof value !== 'string' || typeof value !== 'number') {
+    if (typeof value !== 'string' && typeof value !== 'number') {
       throw new AppError(400, 'Bad request: Value must be a string or a number');
     }
   

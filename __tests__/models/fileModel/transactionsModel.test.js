@@ -1,6 +1,6 @@
 const fs = require('fs');
-const TransactionsModel = require('../source/models/transactionsModel');
-const AppError = require('../libs/appError');
+const TransactionsModel = require('../../../source/models/transactionsModel');
+const AppError = require('../../../libs/appError');
 
 const transactionsModel = new TransactionsModel();
 
@@ -17,7 +17,7 @@ fs.writeFile = jest.fn((path, dataJSON, callback) => {
   callback(null);
 });
 
-describe('File Model tests (general tests with cardsModel)', () => {
+describe('File Model / Transactions Model', () => {
   
   test('getAll()', () => expect(transactionsModel.getAll()).resolves.toEqual(transactions));
   
