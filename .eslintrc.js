@@ -28,6 +28,7 @@ module.exports = {
   },
   
   rules: {
+    'consistent-return': 'warn',
     'class-methods-use-this': 'off',
     'default-case': 'off',
     'jsx-quotes': ['error', 'prefer-single'],
