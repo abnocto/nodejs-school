@@ -1,3 +1,6 @@
+const http = require('http');
+const https = require('https');
+const fs = require('fs');
 const Koa = require('koa');
 const serve = require('koa-static');
 const bodyParser = require('koa-bodyparser');
@@ -53,8 +56,27 @@ app.use(router.routes());
 // serve static
 app.use(serve('./public'));
 
-const server = app.listen(3000, () => {
-  logger.info('YM Node School App listening on port 3000!');
+const HTTP_PORT = 3000;
+const HTTPS_PORT = 8000;
+
+const SSL_OPTIONS = {
+  key: fs.readFileSync('./ssl/key.pem'),
+  cert: fs.readFileSync('./ssl/cert.pem'),
+};
+
+const HTTP_SERVER = http.createServer((req, res) => {
+  logger.info(`Redirect from http://localhost:${HTTP_PORT} to https://localhost:${HTTPS_PORT}`);
+  res.writeHead(301, { Location: `https://localhost:${HTTPS_PORT}` });
+  res.end();
+}).listen(HTTP_PORT, () => {
+  logger.info(`YM Node School App listening on port ${HTTP_PORT} (HTTP)!`);
 });
 
-module.exports = server;
+const HTTPS_SERVER = https.createServer(SSL_OPTIONS, app.callback()).listen(HTTPS_PORT, () => {
+  logger.info(`YM Node School App listening on port ${HTTPS_PORT} (HTTPS)!`);
+});
+
+module.exports = {
+  HTTP_SERVER,
+  HTTPS_SERVER,
+};

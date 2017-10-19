@@ -1,6 +1,7 @@
+ssl/
+logs/
 public/*.js
 public/*.css
-logs/*.log
 node_modules/
 source/controllers/index.js
 .DS_Store
