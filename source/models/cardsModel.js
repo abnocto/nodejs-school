@@ -1,8 +1,18 @@
-const FileModel = require('./common/fileModel');
+const MongooseModel = require('./common/mongooseModel');
+const Card = require('../data/domain/card');
 
-class CardsModel extends FileModel {
+const toClient = (card) => {
+  if (!card) return null;
+  return {
+    id: card.id,
+    cardNumber: card.cardNumber,
+    balance: card.balance,
+  };
+};
+
+class CardsModel extends MongooseModel {
   constructor() {
-    super('cards.json');
+    super(Card, toClient);
   }
 }
 

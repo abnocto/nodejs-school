@@ -1,7 +1,7 @@
 const objects = [
-  { cardNumber: '5469250000000004', balance: 226264, id: 1 },
-  { cardNumber: '6762300000000009', balance: 88, id: 2 },
-  { cardNumber: '4058700000000008', balance: 700, id: 3 },
+  { cardNumber: '5469250000000004', balance: 226264, id: '1' },
+  { cardNumber: '6762300000000009', balance: 88, id: '2' },
+  { cardNumber: '4058700000000008', balance: 700, id: '3' },
 ];
 
 class CardsModel {

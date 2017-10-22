@@ -20,8 +20,8 @@ describe('Service', () => {
       -1,
       2.5,
       0,
-      '1',
-      'abc',
+      1,
+      '',
       null,
       undefined,
       {},
@@ -30,19 +30,19 @@ describe('Service', () => {
     
     invalidIds.forEach((id, index) => {
       test(` - with invalid id #${index + 1}`, () => {
-        const err = new AppError(400, 'Bad request: Id must be a positive integer');
+        const err = new AppError(400, 'Bad request: Id must be a string');
         return expect(cardsService.get(id)).rejects.toEqual(err);
       });
     });
     
     test(' - with valid id and for nonexistent id', () => {
-      const id = 1000;
+      const id = '1000';
       const err = new AppError(404, `Not found: Wasn't found by id ${id}`);
       return expect(cardsService.get(id)).rejects.toEqual(err);
     });
     
     test(' - with valid id and for existing id', async () => {
-      const id = 2;
+      const id = '2';
       const card = await cardsService.get(id);
       expect(card).toBeInstanceOf(Object);
     });
@@ -117,8 +117,8 @@ describe('Service', () => {
       -1,
       2.5,
       0,
-      '1',
-      'abc',
+      1,
+      '',
       null,
       undefined,
       {},
@@ -127,19 +127,19 @@ describe('Service', () => {
     
     invalidIds.forEach((id, index) => {
       test(` - with invalid id #${index + 1}`, () => {
-        const err = new AppError(400, 'Bad request: Id must be a positive integer');
+        const err = new AppError(400, 'Bad request: Id must be a string');
         return expect(cardsService.remove(id)).rejects.toEqual(err);
       });
     });
     
     test(' - with valid id and for nonexistent id', () => {
-      const id = 1000;
+      const id = '1000';
       const err = new AppError(404, `Not found: Wasn't found by id ${id}`);
       return expect(cardsService.remove(id)).rejects.toEqual(err);
     });
     
     test(' - with valid id and for existing id', () => {
-      const id = 2;
+      const id = '2';
       return expect(cardsService.remove(id)).resolves.toBeUndefined();
     });
     

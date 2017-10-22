@@ -15,7 +15,7 @@ class TransactionsService extends Service {
   /**
    * Creates new transaction by data
    * @param {Object} data Data to create transaction with
-   * @param {Number} cardId card id (foreign key)
+   * @param {String} cardId card id (foreign key)
    * @returns {Promise.<Object>}
    */
   async create(data, cardId) {

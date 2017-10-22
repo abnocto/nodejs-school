@@ -16,15 +16,15 @@ export function getInitialState() {
  */
 export function read(state, list) {
   const byId = {};
+  const keys = [];
   
   list.forEach((entity) => {
     byId[entity.id] = {
       ...entity,
       ...objectFlags,
     };
+    keys.push(entity.id);
   });
-  
-  const keys = Object.keys(byId).map(key => Number(key));
   
   return {
     ...state,
@@ -93,7 +93,7 @@ export function copy(object) {
 /**
  * Deletes entity object with objectId
  * @param { Object } state
- * @param { Number } objectId
+ * @param { Number | String } objectId
  * @returns { Object }
  */
 export function remove(state, objectId) {

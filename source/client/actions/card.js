@@ -18,7 +18,7 @@ import { completeURL } from '../service/urlService';
 /**
  * @param {Object} api
  * @param {String} mode
- * @param {Number} cardId
+ * @param {String} cardId
  * @param {Object} data
  */
 const cardAsyncUpdateOperation = (api, mode, cardId, data) => async (dispatch) => {
@@ -83,9 +83,9 @@ const cardAsyncUpdateOperation = (api, mode, cardId, data) => async (dispatch) =
 };
 
 /**
- * @param {Number} activeCardId
- * @param {Number} withdrawCardId
- * @param {Number} prepaidCardId
+ * @param {String} activeCardId
+ * @param {String} withdrawCardId
+ * @param {String} prepaidCardId
  * @returns {ActionCardSelect}
  */
 export const setActive = (activeCardId, withdrawCardId, prepaidCardId) => ({
@@ -111,14 +111,14 @@ export const reset = mode => ({
 
 /**
  * @param {String} mode
- * @param {Number} cardId
+ * @param {String} cardId
  * @param {Object} data
  */
 export const pay = (mode, cardId, data) => cardAsyncUpdateOperation(API_CARD_PAY, mode, cardId, data);
 
 /**
  * @param {String} mode
- * @param {Number} cardId
+ * @param {String} cardId
  * @param {Object} data
  */
 export const transfer = (mode, cardId, data) => cardAsyncUpdateOperation(API_CARD_TRANSFER, mode, cardId, data);

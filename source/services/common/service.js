@@ -15,12 +15,12 @@ class Service {
   
   /**
    * Returns object by Primary key (id)
-   * @param {Number} id Primary key
+   * @param {String} id Primary key
    * @returns {Promise.<Object>}
    */
   async get(id) {
-    if (!Number.isInteger(id) || id <= 0) {
-      throw new AppError(400, 'Bad request: Id must be a positive integer');
+    if (!id || typeof id !== 'string') {
+      throw new AppError(400, 'Bad request: Id must be a string');
     }
     
     const object = await this._getModel().get(id);
@@ -51,12 +51,12 @@ class Service {
   
   /**
    * Removes object by id
-   * @param {Number} id Object id
+   * @param {String} id Object id
    * @returns {Promise.<void>}
    */
   async remove(id) {
-    if (!Number.isInteger(id) || id <= 0) {
-      throw new AppError(400, 'Bad request: Id must be a positive integer');
+    if (!id || typeof id !== 'string') {
+      throw new AppError(400, 'Bad request: Id must be a string');
     }
     
     const object = await this._getModel().get(id);

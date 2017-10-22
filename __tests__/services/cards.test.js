@@ -77,7 +77,7 @@ describe('Service / Cards Service', () => {
   describe('mobile(id, data, mode)', () => {
   
     test(' - with bad operation', () => {
-      const id = 1;
+      const id = '1';
       const data = { sum: 1000, data: '+79991234567' };
       const mode = 'FOO';
       const err = new AppError(500, 'Bad mobile operation');
@@ -88,8 +88,8 @@ describe('Service / Cards Service', () => {
       -1,
       2.5,
       0,
-      '1',
-      'abc',
+      1,
+      '',
       null,
       undefined,
       {},
@@ -100,7 +100,7 @@ describe('Service / Cards Service', () => {
       test(` - with invalid id #${index + 1}`, () => {
         const data = { sum: 1000, data: '+79991234567' };
         const mode = 'PAYMENT';
-        const err = new AppError(400, 'Bad request: Id must be a positive integer');
+        const err = new AppError(400, 'Bad request: Id must be a string');
         return expect(cardsService.mobile(id, data, mode)).rejects.toEqual(err);
       });
     });
@@ -124,7 +124,7 @@ describe('Service / Cards Service', () => {
   
     invalidData.forEach((data, index) => {
       test(` - with invalid data #${index + 1}`, () => {
-        const id = 1;
+        const id = '1';
         const mode = 'PAYMENT';
         const err = new AppError(400, 'Bad request: Mobile operation data is invalid');
         return expect(cardsService.mobile(id, data, mode)).rejects.toEqual(err);
@@ -132,7 +132,7 @@ describe('Service / Cards Service', () => {
     });
     
     test(' - with valid args and for nonexistent card id', () => {
-      const id = 1000;
+      const id = '1000';
       const data = { sum: 1000, data: '+79991234567' };
       const mode = 'PAYMENT';
       const err = new AppError(404, `Not found: Card wasn't found by id ${id}`);
@@ -140,7 +140,7 @@ describe('Service / Cards Service', () => {
     });
     
     test(' - with PAYMENT mode and card balance less than payment sum', () => {
-      const id = 1;
+      const id = '1';
       const data = { sum: Infinity, data: '+79991234567' };
       const mode = 'PAYMENT';
       const err = new AppError(403, 'Forbidden: Card balance is less than payment sum');
@@ -148,9 +148,9 @@ describe('Service / Cards Service', () => {
     });
     
     const validCases = [
-      { id: 1, data: { sum: 100, data: '+79991234556' }, mode: 'PAYMENT' },
-      { id: 1, data: { sum: 100, data: '+79991234556' }, mode: 'REFILL' },
-      { id: 1, data: { sum: 10000000, data: '+79991234556' }, mode: 'REFILL' },
+      { id: '1', data: { sum: 100, data: '+79991234556' }, mode: 'PAYMENT' },
+      { id: '1', data: { sum: 100, data: '+79991234556' }, mode: 'REFILL' },
+      { id: '1', data: { sum: 10000000, data: '+79991234556' }, mode: 'REFILL' },
     ];
     
     validCases.forEach((validCase, index) => {
@@ -184,8 +184,8 @@ describe('Service / Cards Service', () => {
       -1,
       2.5,
       0,
-      '1',
-      'abc',
+      1,
+      '',
       null,
       undefined,
       {},
@@ -195,62 +195,62 @@ describe('Service / Cards Service', () => {
     invalidIds.forEach((id, index) => {
       test(` - with invalid id #${index + 1}`, () => {
         const data = {};
-        const err = new AppError(400, 'Bad request: Id must be a positive integer');
+        const err = new AppError(400, 'Bad request: Id must be a string');
         return expect(cardsService.transfer(id, data)).rejects.toEqual(err);
       });
     });
     
     const invalidData = [
-      { sum: 'abc', receiverCardId: 2 },
-      { sum: null, receiverCardId: 2 },
-      { sum: undefined, receiverCardId: 2 },
-      { sum: '1000', receiverCardId: 2 },
-      { sum: [], receiverCardId: 2 },
-      { sum: [100], receiverCardId: 2 },
-      { sum: {}, receiverCardId: 2 },
-      { sum: 0, receiverCardId: 2 },
-      { sum: -20, receiverCardId: 2 },
-      { sum: 100, receiverCardId: [2] },
+      { sum: 'abc', receiverCardId: '2' },
+      { sum: null, receiverCardId: '2' },
+      { sum: undefined, receiverCardId: '2' },
+      { sum: '1000', receiverCardId: '2' },
+      { sum: [], receiverCardId: '2' },
+      { sum: [100], receiverCardId: '2' },
+      { sum: {}, receiverCardId: '2' },
+      { sum: 0, receiverCardId: '2' },
+      { sum: -20, receiverCardId: '2' },
+      { sum: 100, receiverCardId: ['2'] },
       { sum: 100, receiverCardId: {} },
       { sum: 100, receiverCardId: null },
-      { sum: 100, receiverCardId: '2' },
+      { sum: 100, receiverCardId: 2 },
       { sum: 100, receiverCardId: undefined },
     ];
     
     invalidData.forEach((data, index) => {
       test(` - with invalid data #${index + 1}`, () => {
-        const id = 1;
+        const id = '1';
         const err = new AppError(400, 'Bad request: Transfer operation data is invalid');
         return expect(cardsService.transfer(id, data)).rejects.toEqual(err);
       });
     });
     
     test(' - with valid args and for nonexistent card sender id', () => {
-      const id = 1000;
-      const data = { sum: 1000, receiverCardId: 2 };
+      const id = '1000';
+      const data = { sum: 1000, receiverCardId: '2' };
       const err = new AppError(404, `Not found: Card (sender) wasn't found by id ${id}`);
       return expect(cardsService.transfer(id, data)).rejects.toEqual(err);
     });
   
     test(' - with valid args and for nonexistent card receiver id', () => {
-      const id = 1;
-      const data = { sum: 1000, receiverCardId: 2000 };
+      const id = '1';
+      const data = { sum: 1000, receiverCardId: '2000' };
       const err = new AppError(404, `Not found: Card (receiver) wasn't found by id ${data.receiverCardId}`);
       return expect(cardsService.transfer(id, data)).rejects.toEqual(err);
     });
 
     test(' - with sender card balance less than transfer sum', () => {
-      const id = 1;
-      const data = { sum: Infinity, receiverCardId: 2 };
+      const id = '1';
+      const data = { sum: Infinity, receiverCardId: '2' };
       const err = new AppError(403, 'Forbidden: Card (sender) balance is less than payment amount');
       return expect(cardsService.transfer(id, data)).rejects.toEqual(err);
     });
 
     const validCases = [
-      { id: 1, data: { sum: 100, receiverCardId: 2 } },
-      { id: 1, data: { sum: 1.5, receiverCardId: 3 } },
-      { id: 2, data: { sum: 40, receiverCardId: 1 } },
-      { id: 3, data: { sum: 200, receiverCardId: 2 } },
+      { id: '1', data: { sum: 100, receiverCardId: '2' } },
+      { id: '1', data: { sum: 1.5, receiverCardId: '3' } },
+      { id: '2', data: { sum: 40, receiverCardId: '1' } },
+      { id: '3', data: { sum: 200, receiverCardId: '2' } },
     ];
 
     validCases.forEach((validCase, index) => {

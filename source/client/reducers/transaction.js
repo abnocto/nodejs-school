@@ -10,8 +10,8 @@ import {
 
 /**
  * @typedef {Object} Transaction
- * @property {Number} id
- * @property {Number} cardId
+ * @property {String} id
+ * @property {String} cardId
  * @property {String} type [ prepaidCard | card2Card | paymentMobile ]
  * @property {String} data
  * @property {String} time (ISO)

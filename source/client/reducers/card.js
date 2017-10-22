@@ -14,14 +14,14 @@ import {
 
 /**
  * @typedef {Object} Card
- * @property {Number} id
+ * @property {String} id
  * @property {String} cardNumber
  * @property {Number} balance
  **
  * Card state special properties:
- * {Number} [ACTIVE_CARD_ID_PROP]
- * {Number} [WITHDRAW_CARD_ID_PROP]
- * {Number} [PREPAID_CARD_ID_PROP]
+ * {String} [ACTIVE_CARD_ID_PROP]
+ * {String} [WITHDRAW_CARD_ID_PROP]
+ * {String} [PREPAID_CARD_ID_PROP]
  * {String} [PAYMENT_MOBILE_MODE]: [ OFF (default) | PENDING | SUCCESS | FORBIDDEN | ERROR ]
  * {String} [WITHDRAW_CARD_MODE]: [ OFF (default) | PENDING | SUCCESS | FORBIDDEN | ERROR ]
  * {String} [PREPAID_CARD_MODE]: [ OFF (default) | PENDING | SUCCESS | FORBIDDEN | ERROR ]
@@ -37,9 +37,9 @@ export default (state = getInitialState(), action) => {
      */
     /**
      * @typedef {Object} PayloadCardSelect
-     * @property {Number} [ACTIVE_CARD_ID_PROP]
-     * @property {Number} [WITHDRAW_CARD_ID_PROP]
-     * @property {Number} [PREPAID_CARD_ID_PROP]
+     * @property {String} [ACTIVE_CARD_ID_PROP]
+     * @property {String} [WITHDRAW_CARD_ID_PROP]
+     * @property {String} [PREPAID_CARD_ID_PROP]
      */
     case ACTION_CARD_SELECT:
       return {

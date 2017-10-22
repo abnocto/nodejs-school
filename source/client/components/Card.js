@@ -66,7 +66,7 @@ const Card = ({ data, isActive, type, onClick, preparedModeCard, onModeCardSelec
     return (
       <CardLayout active={true} bgColor={bgColor}>
         <CardLogo url={bankLogoUrl} active={true} />
-        <CardSelect value={`${preparedModeCard.id}`} onChange={id => onModeCardSelect(Number(id))}>
+        <CardSelect value={`${preparedModeCard.id}`} onChange={id => onModeCardSelect(id)}>
           {
             data.map((preparedCard, index) => (
               <Select.Option key={index} value={`${preparedCard.id}`}>{preparedCard.number}</Select.Option>

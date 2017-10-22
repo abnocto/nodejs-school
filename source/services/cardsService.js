@@ -35,7 +35,7 @@ class CardsService extends Service {
   
   /**
    * Mobile operation (payment/refill). Creates new transaction and changes card balance.
-   * @param {Number} id Card id
+   * @param {String} id Card id
    * @param {Object} data Operation data
    * @param {String} mode Mobile operation mode: 'PAYMENT' or 'REFILL'
    * @returns {Promise.<Object>}
@@ -44,9 +44,9 @@ class CardsService extends Service {
     if (!['PAYMENT', 'REFILL'].includes(mode)) {
       throw new AppError(500, 'Bad mobile operation');
     }
-    
-    if (!Number.isInteger(id) || id <= 0) {
-      throw new AppError(400, 'Bad request: Id must be a positive integer');
+  
+    if (!id || typeof id !== 'string') {
+      throw new AppError(400, 'Bad request: Id must be a string');
     }
   
     if (!data
@@ -95,18 +95,18 @@ class CardsService extends Service {
   
   /**
    * Transfer operation. Creates two transactions for each card, changes cards balances.
-   * @param {Number} id Card id
+   * @param {String} id Card id
    * @param {Object} data Operation data
    * @returns {Promise.<Object>}
    */
   async transfer(id, data) {
-    if (!Number.isInteger(id) || id <= 0) {
-      throw new AppError(400, 'Bad request: Id must be a positive integer');
+    if (!id || typeof id !== 'string') {
+      throw new AppError(400, 'Bad request: Id must be a string');
     }
   
     if (!data
       || !data.sum || typeof data.sum !== 'number' || data.sum <= 0
-      || !data.receiverCardId || typeof data.receiverCardId !== 'number' || data.receiverCardId <= 0) {
+      || !data.receiverCardId || typeof data.receiverCardId !== 'string') {
       throw new AppError(400, 'Bad request: Transfer operation data is invalid');
     }
   
