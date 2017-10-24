@@ -3,13 +3,10 @@ const utils = require('../../libs/utils');
 
 const Service = require('./common/service');
 
-const CardsModel = require('../models/cardsModel');
-const TransactionsModel = require('../models/transactionsModel');
-
 class TransactionsService extends Service {
-  constructor() {
-    super(new TransactionsModel());
-    this._cardsModel = new CardsModel();
+  constructor({ cardsModel, transactionsModel }) {
+    super(transactionsModel);
+    this._cardsModel = cardsModel;
   }
   
   /**

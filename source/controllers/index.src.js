@@ -4,8 +4,8 @@ const { readCards } = require('../client/reducers/card');
 const { readTransactions } = require('../client/reducers/transaction');
 
 module.exports = async (ctx) => {
-  const cards = await ctx.CardsService.getAll();
-  const transactions = await ctx.TransactionsService.getAll();
+  const cards = await ctx.cardsService.getAll();
+  const transactions = await ctx.transactionsService.getAll();
   
   const data = {
     user: {

@@ -2,13 +2,10 @@ const AppError = require('../../libs/appError');
 
 const Service = require('./common/service');
 
-const CardsModel = require('../models/cardsModel');
-const TransactionsModel = require('../models/transactionsModel');
-
 class CardsService extends Service {
-  constructor() {
-    super(new CardsModel());
-    this._transactionsModel = new TransactionsModel();
+  constructor({ cardsModel, transactionsModel }) {
+    super(cardsModel);
+    this._transactionsModel = transactionsModel;
   }
   
   /**

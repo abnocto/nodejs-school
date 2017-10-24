@@ -1,10 +1,14 @@
 jest.mock('../../source/models/cardsModel');
 jest.mock('../../source/models/transactionsModel');
 
+const CardsModel = require('../../source/models/cardsModel');
+const TransactionsModel = require('../../source/models/transactionsModel');
 const TransationsService = require('../../source/services/transactionsService');
 const AppError = require('../../libs/appError');
 
-const transactionsService = new TransationsService();
+const cardsModel = new CardsModel();
+const transactionsModel = new TransactionsModel();
+const transactionsService = new TransationsService({ cardsModel, transactionsModel });
 
 describe('Service / Transactions Service', () => {
   

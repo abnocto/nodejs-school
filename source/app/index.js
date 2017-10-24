@@ -7,6 +7,9 @@ const router = require('../routes');
 const CardsService = require('../services/cardsService');
 const TransactionsService = require('../services/transactionsService');
 
+const CardsModel = require('../models/cardsModel');
+const TransactionsModel = require('../models/transactionsModel');
+
 const AppError = require('../../libs/appError');
 
 const logger = require('../../libs/logger')('APP');
@@ -39,8 +42,10 @@ app.use(async (ctx, next) => {
 
 // add services as context props
 app.use(async (ctx, next) => {
-  ctx.CardsService = new CardsService();
-  ctx.TransactionsService = new TransactionsService();
+  const cardsModel = new CardsModel();
+  const transactionsModel = new TransactionsModel();
+  ctx.cardsService = new CardsService({ cardsModel, transactionsModel });
+  ctx.transactionsService = new TransactionsService({ cardsModel, transactionsModel });
   await next();
 });
 
