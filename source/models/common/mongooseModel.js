@@ -65,7 +65,7 @@ class MongooseModel extends Model {
    * @returns {Promise.<Object>}
    */
   async update(object) {
-    const dbObject = await this._getMongooseModel().findOneAndUpdate({ id: object.id }, object, { new: true }).lean();
+    const dbObject = await this._getMongooseModel().findOneAndUpdate({ id: object.id }, object, { new: true });
     if (!dbObject) {
       logger.warn(`update(object) with id ${object.id}: object was NOT found by id, object was NOT updated`);
       return object;

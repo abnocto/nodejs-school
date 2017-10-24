@@ -1,35 +1,21 @@
+jest.mock('../../../source/models/db/card');
+
 const log4js = require('log4js');
 
 // create stubs for logger
 const loggerMethods = ['info', 'warn', 'error'];
 log4js.getLogger = jest.fn(() => loggerMethods.reduce((obj, key) => Object.assign(obj, { [key]: jest.fn() }), {}));
 
-const db = require('../../../source/data');
 const CardsModel = require('../../../source/models/cardsModel');
 const Card = require('../../../source/models/db/card');
-const Counter = require('../../../source/models/db/counter');
 
 const cardsModel = new CardsModel();
 
 describe('Mongoose Model (common), Mongoose Model / Cards Model', () => {
   
-  beforeAll(() => db.connect());
-  
-  beforeEach(async () => {
-    await Counter.create({ id: 'Card', value: 0 });
-    return Card.create([
-      { cardNumber: '4058700000000008', balance: 700 },
-      { cardNumber: '5469250000000004', balance: 226264 },
-      { cardNumber: '6762300000000009', balance: 88 },
-    ]);
+  beforeEach(() => {
+    Card.reset();
   });
-  
-  afterEach(async () => {
-    await Card.remove({});
-    return Counter.remove({});
-  });
-  
-  afterAll(() => db.disconnect());
   
   test('getAll()', async () => {
     const dbCards = await cardsModel.getAll();

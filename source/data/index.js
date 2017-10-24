@@ -5,8 +5,7 @@ const logger = require('../../libs/logger')('DATABASE');
 const connect = async () => {
   mongoose.Promise = global.Promise;
   
-  const isTesting = process.env.NODE_ENV === 'testing';
-  const { host, port, name, options } = isTesting ? dbConfig.mongooseTest : dbConfig.mongoose;
+  const { host, port, name, options } = dbConfig.mongoose;
   const uri = `mongodb://${host}:${port}/${name}`;
   
   try {
