@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const Counter = require('./counter');
+const logger = require('../../../libs/logger')('TransactionSchema');
 
 const Schema = mongoose.Schema;
 
@@ -6,7 +8,6 @@ const transactionSchema = new Schema({
     
   id: {
     type: Number,
-    required: true,
   },
 
   cardId: {
@@ -35,6 +36,17 @@ const transactionSchema = new Schema({
     required: true,
   },
 
+});
+
+transactionSchema.pre('save', async function cb(next) {
+  try {
+    const counterObj = await Counter.findOneAndUpdate({ id: 'Transaction' }, { $inc: { value: 1 } }, { new: true });
+    this.id = counterObj.value;
+    next();
+  } catch (err) {
+    logger.error(`Error in pre save middleware: ${err.message}`);
+    next(err);
+  }
 });
 
 const Transaction = mongoose.model('Transaction', transactionSchema);

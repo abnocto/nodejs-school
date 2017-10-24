@@ -1,9 +1,22 @@
+const MongooseModel = require('./common/mongooseModel');
+const Transaction = require('./db/transaction');
 const AppError = require('../../libs/appError');
-const FileModel = require('./common/fileModel');
 
-class TransactionsModel extends FileModel {
+const toClient = (obj) => {
+  if (!obj) return null;
+  return {
+    id: obj.id,
+    cardId: obj.cardId,
+    type: obj.type,
+    data: obj.data,
+    time: obj.time,
+    sum: obj.sum,
+  };
+};
+
+class TransactionsModel extends MongooseModel {
   constructor() {
-    super('transactions.json');
+    super(Transaction, toClient);
   }
   
   /**

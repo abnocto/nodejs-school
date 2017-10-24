@@ -6,7 +6,8 @@ const db = require('./data');
 const serverConfig = require('./config/server');
 const logger = require('../libs/logger')('SERVER');
 
-const { HTTP_PORT, HTTPS_PORT } = serverConfig;
+const HTTP_PORT = serverConfig.HTTP.port;
+const HTTPS_PORT = serverConfig.HTTPS.port;
 
 const SSL_OPTIONS = {
   key: fs.readFileSync('./ssl/key.pem'),

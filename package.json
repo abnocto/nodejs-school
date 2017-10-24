@@ -2,10 +2,10 @@
   "name": "node-school-wallet-app",
   "version": "1.0.0",
   "description": "Приложение школы Node.js «Кошелёк»",
-  "author": "",
+  "author": "dazzlegit",
   "repository": {
     "type": "git",
-    "url": "ssh://git@github.com:rakchaev/node-school-app.git"
+    "url": "ssh://git@github.com:dazzlegit/nodejs-school"
   },
   "license": "ISC",
   "engines": {
@@ -63,10 +63,10 @@
     "webpack": "^3.6.0"
   },
   "scripts": {
-    "start": "node ./source/app",
-    "test": "jest",
+    "start": "node ./source",
+    "test": "NODE_ENV=testing jest",
     "build:prod": "NODE_ENV=production ./node_modules/.bin/webpack",
-    "build:dev": "./node_modules/.bin/webpack",
+    "build:dev": "NODE_ENV=development ./node_modules/.bin/webpack",
     "eslint": "./node_modules/.bin/eslint .",
     "precommit": "npm test && npm run eslint"
   }
