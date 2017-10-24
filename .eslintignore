@@ -1,3 +1,4 @@
 public/
 node_modules/
+logs/
 source/controllers/index.js

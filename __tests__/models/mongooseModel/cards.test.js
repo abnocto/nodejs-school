@@ -1,11 +1,5 @@
 jest.mock('../../../source/models/db/card');
 
-const log4js = require('log4js');
-
-// create stubs for logger
-const loggerMethods = ['info', 'warn', 'error'];
-log4js.getLogger = jest.fn(() => loggerMethods.reduce((obj, key) => Object.assign(obj, { [key]: jest.fn() }), {}));
-
 const CardsModel = require('../../../source/models/cardsModel');
 const Card = require('../../../source/models/db/card');
 

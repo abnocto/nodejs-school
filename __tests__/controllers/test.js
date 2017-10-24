@@ -1,15 +1,5 @@
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-
 jest.mock('../../source/services/cardsService');
 jest.mock('../../source/services/transactionsService');
-
-const log4js = require('log4js');
-
-// create stubs for logger
-const loggerMethods = ['info', 'error'];
-log4js.getLogger = jest.fn(() => loggerMethods.reduce((obj, key) => Object.assign(obj, { [key]: jest.fn() }), {}));
-
-console.error = jest.fn(); // eslint-disable-line no-console
 
 const fs = require('fs');
 const https = require('https');
