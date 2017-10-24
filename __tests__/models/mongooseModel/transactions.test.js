@@ -51,7 +51,7 @@ describe('Mongoose Model / Transactions Model', () => {
   
   afterAll(() => db.disconnect());
   
-  test.only('getAll()', async () => {
+  test('getAll()', async () => {
     const dbTransactions = await transactionsModel.getAll();
     const dbIds = dbTransactions.map(dbTransaction => dbTransaction.id).sort();
     expect(dbTransactions).toHaveLength(2);
