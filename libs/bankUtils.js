@@ -74,8 +74,7 @@ const bankUtils = {
    */
   securify(cardNumber) {
     if (typeof cardNumber !== 'string') return cardNumber;
-    // card-info problem... return `${cardNumber.slice(0, 7)}${'*'.repeat(6)}${cardNumber.slice(13)}`;
-    return cardNumber;
+    return `${cardNumber.slice(0, 7)}${'*'.repeat(6)}${cardNumber.slice(13)}`;
   },
 
 };
