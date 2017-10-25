@@ -51,6 +51,20 @@ class TransactionsService extends Service {
   }
   
   /**
+   * Returns today transaction history csv stream
+   * @param cardId Card id
+   * @returns {Promise.<Stream>}
+   */
+  async getHistoryStream(cardId) {
+    const card = await this._getCardsModel().get(cardId);
+    if (!card) {
+      throw new AppError(404, 'Not found: Card wasn\'t found by id');
+    }
+    
+    return this._getModel().getHistoryStream(cardId);
+  }
+  
+  /**
    * Returns CardsModel instance
    * @returns {Object}
    * @private

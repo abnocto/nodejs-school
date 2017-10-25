@@ -10,6 +10,7 @@ import {
   PREPAID_CARD_DESC,
   WITHDRAW_CARD_DESC,
   DEFAULT_DESC,
+  OFF,
 } from '../constants/transaction';
 import { Island } from './';
 
@@ -46,6 +47,19 @@ const HistoryItem = styled.div`
   }
 `;
 
+const HistoryButton = styled.button`
+  margin: 5px 15px;
+  width: 120px;
+  font-size: 13px;
+  font-weight: 600;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  background-color: rgba(0, 0, 0, 0.05);
+  color: rgba(0, 0, 0, 0.65);
+  outline: none
+`;
+
 const HistoryItemIcon = styled.div`
   width: 50px;
   height: 50px;
@@ -72,7 +86,7 @@ const HistoryItemSum = styled.div`
   text-overflow: ellipsis;
 `;
 
-const History = ({ cardHistory }) => {
+const History = ({ cardHistory, preparedActiveCard, getHistory, historyStatus }) => {
   const getHistoryItemTitle = (item) => {
     let typeTitle = '';
     
@@ -99,7 +113,10 @@ const History = ({ cardHistory }) => {
   
   return (
     <HistoryLayout>
-      <HistoryTitle>Сегодня</HistoryTitle>
+      <HistoryTitle>
+        Сегодня
+        <HistoryButton disabled={historyStatus !== OFF} onClick={() => getHistory(preparedActiveCard.id)}>Экспорт</HistoryButton>
+      </HistoryTitle>
       {cardHistory.map((item, index) => {
         const historyItemDate = moment(item.time, moment.ISO_8601);
         const today = moment().format('L');
@@ -130,6 +147,9 @@ const History = ({ cardHistory }) => {
 
 History.propTypes = {
   cardHistory: PropTypes.arrayOf(PropTypes.object).isRequired,
+  preparedActiveCard: PropTypes.object.isRequired,
+  getHistory: PropTypes.func.isRequired,
+  historyStatus: PropTypes.string.isRequired,
 };
 
 export default History;

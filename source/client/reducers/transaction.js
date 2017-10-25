@@ -6,6 +6,8 @@ import {
   PAYMENT_MOBILE_MODE_TRANSACTIONS,
   WITHDRAW_CARD_MODE_TRANSACTIONS,
   PREPAID_CARD_MODE_TRANSACTIONS,
+  ACTION_TRANSACTION_HISTORY,
+  OFF, PENDING, ERROR,
 } from '../constants/transaction';
 
 /**
@@ -21,6 +23,7 @@ import {
  * {Object} [PAYMENT_MOBILE_MODE_TRANSACTIONS]
  * {Object} [WITHDRAW_MODE_TRANSACTIONS]
  * {Object} [PREPAID_MODE_TRANSACTIONS]
+ * {String} historyStatus [ OFF | PENDING | ERROR ]
  */
 
 export default (state = getInitialState(), action) => {
@@ -29,6 +32,21 @@ export default (state = getInitialState(), action) => {
       return {
         ...action.payload.transactions.reduce((currState, transaction) => create(currState, transaction), state),
         [`${action.payload.mode}Transactions`]: action.payload.transactions,
+      };
+  
+    /**
+     * @typedef {Object} ActionTransactionHistory
+     * @property {String} type [ACTION_TRANSACTION_HISTORY]
+     * @property {PayloadTransactionHistory} payload
+     */
+    /**
+     * @typedef {Object} PayloadTransactionHistory
+     * @property {String} status
+     */
+    case ACTION_TRANSACTION_HISTORY:
+      return {
+        ...state,
+        historyStatus: action.payload.status,
       };
     
     default:
@@ -49,5 +67,6 @@ export function readTransactions(state, list) {
     [PAYMENT_MOBILE_MODE_TRANSACTIONS]: [],
     [WITHDRAW_CARD_MODE_TRANSACTIONS]: [],
     [PREPAID_CARD_MODE_TRANSACTIONS]: [],
+    historyStatus: OFF,
   };
 }

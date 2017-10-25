@@ -1,3 +1,14 @@
+import { API_PREFIX, GET } from './util';
+
+// api
+export const API_TRANSACTION_HISTORY = {
+  url: `${API_PREFIX}/cards/{cardId}/file-transactions`,
+  method: GET,
+};
+
+// actions
+export const ACTION_TRANSACTION_HISTORY = 'ACTION_TRANSACTION_HISTORY';
+
 // transaction types
 export const PREPAID_CARD = 'prepaidCard';
 export const WITHDRAW_CARD = 'card2Card';
@@ -12,3 +23,8 @@ export const DEFAULT_DESC = 'Операция';
 export const PAYMENT_MOBILE_MODE_TRANSACTIONS = 'payModeTransactions';
 export const WITHDRAW_CARD_MODE_TRANSACTIONS = 'withdrawModeTransactions';
 export const PREPAID_CARD_MODE_TRANSACTIONS = 'prepaidModeTransactions';
+
+// history statuses
+export const OFF = 'OFF';
+export const PENDING = 'PENDING';
+export const ERROR = 'ERROR';

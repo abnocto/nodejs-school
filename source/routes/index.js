@@ -18,6 +18,8 @@ router.post('/cards/:id/transfer', cardsController.transfer);
 router.get('/cards/:id/transactions', transactionsController.get);
 router.post('/cards/:id/transactions', transactionsController.create);
 
+router.get('/cards/:id/file-transactions', transactionsController.history);
+
 router.all('/error', errorController);
 
 module.exports = router;

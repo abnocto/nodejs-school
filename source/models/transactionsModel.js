@@ -2,6 +2,8 @@ const MongooseModel = require('./common/mongooseModel');
 const Transaction = require('./db/transaction');
 const transactionClientTransformer = require('./transform/transactionClientTransform');
 const transactionSecureTransformer = require('./transform/transactionSecureTransform');
+const transactionHistoryTransformer = require('./transform/transactionHistoryTransform');
+const transactionCSVTransformer = require('./transform/transactionCSVTransform');
 const AppError = require('../../libs/appError');
 const { securify } = require('../../libs/bankUtils');
 
@@ -37,6 +39,24 @@ class TransactionsModel extends MongooseModel {
    */
   async remove(id) {
     throw new AppError(403, 'Forbidden: Transaction removing is forbidden');
+  }
+  
+  /**
+   * Returns today transaction history csv stream
+   * @param cardId Card id
+   * @returns {Stream}
+   */
+  getHistoryStream(cardId) {
+    const now = new Date();
+    const dayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const dayStartUTC = new Date(dayStart.getTime() + dayStart.getTimezoneOffset() * 60 * 1000);
+    const year = dayStartUTC.getFullYear();
+    const month = String(dayStartUTC.getMonth() + 1).padStart(2, '0');
+    const day = String(dayStartUTC.getDate()).padStart(2, '0');
+    const hours = String(dayStartUTC.getHours());
+    const dbCursor = Transaction.find({ cardId, time: { $gte: `${year}-${month}-${day}T${hours}:00:00.000Z` } }).cursor();
+    const historyTransformers = [transactionHistoryTransformer, transactionSecureTransformer, transactionCSVTransformer];
+    return historyTransformers.reduce((stream, transformer) => stream.pipe(transformer()), dbCursor);
   }
 }
 

@@ -4,6 +4,7 @@ import { bindActionCreators } from 'redux';
 import styled from 'emotion/react';
 import { injectGlobal } from 'emotion';
 import { prepareCardData } from '../service/cardService';
+import * as transactionActions from '../actions/transaction';
 import * as cardActions from '../actions/card';
 import {
   PAYMENT_MOBILE_MODE, WITHDRAW_CARD_MODE, PREPAID_CARD_MODE,
@@ -100,6 +101,9 @@ class App extends Component {
           <Workspace>
             <History
               cardHistory={preparedActiveCardTransactionsList}
+              preparedActiveCard={preparedActiveCard}
+              historyStatus={transactionState.historyStatus}
+              getHistory={this.props.transactionActions.getHistory}
             />
             {
               modes.map((mode, index) => (
@@ -129,5 +133,6 @@ export default connect(
   }),
   dispatch => ({
     cardActions: bindActionCreators(cardActions, dispatch),
+    transactionActions: bindActionCreators(transactionActions, dispatch),
   }),
 )(App);

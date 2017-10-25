@@ -11,7 +11,14 @@ const create = async (ctx) => {
   ctx.status = 201;
 };
 
+const history = async (ctx) => {
+  const cardId = Number(ctx.params.id);
+  ctx.body = await ctx.transactionsService.getHistoryStream(cardId);
+  ctx.status = 200;
+};
+
 module.exports = {
   get,
   create,
+  history,
 };
