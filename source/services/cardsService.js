@@ -129,7 +129,9 @@ class CardsService extends Service {
   
     const transactionForSenderData = {
       cardId: cardSender.id,
-      data: cardReceiver.cardNumber,
+      data: {
+        cardId: cardReceiver.id,
+      },
       type: 'card2Card',
       time: (new Date()).toISOString(),
       sum: -data.sum,
@@ -139,7 +141,9 @@ class CardsService extends Service {
   
     const transactionForReceiverData = {
       cardId: cardReceiver.id,
-      data: cardSender.cardNumber,
+      data: {
+        cardId: cardSender.id,
+      },
       type: 'card2Card',
       time: (new Date()).toISOString(),
       sum: data.sum,
