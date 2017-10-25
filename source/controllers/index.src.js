@@ -1,4 +1,4 @@
-const { renderToStaticMarkup } = require('react-dom/server');
+const { renderToStaticNodeStream } = require('react-dom/server');
 const indexView = require('../views');
 const { readCards } = require('../client/reducers/card');
 const { readTransactions } = require('../client/reducers/transaction');
@@ -19,5 +19,6 @@ module.exports = async (ctx) => {
   };
   
   ctx.status = 200;
-  ctx.body = renderToStaticMarkup(indexView(data));
+  ctx.set('Content-Type', 'text/html');
+  ctx.body = renderToStaticNodeStream(indexView(data));
 };
