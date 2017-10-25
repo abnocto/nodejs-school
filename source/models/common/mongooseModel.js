@@ -3,10 +3,10 @@ const logger = require('../../../libs/logger')('MongooseModel');
 
 class MongooseModel extends Model {
   
-  constructor(mongooseModel, toClient) {
+  constructor(mongooseModel, transformers) {
     super();
     this._mongooseModel = mongooseModel;
-    this._toClient = toClient;
+    this._transformers = transformers;
   }
   
   /**
@@ -14,8 +14,8 @@ class MongooseModel extends Model {
    * @returns {Promise.<Array>}
    */
   async getAll() {
-    const dbObjects = await this._getMongooseModel().find();
-    return dbObjects.map(this._toClient);
+    const dbCursor = this._getMongooseModel().find().cursor();
+    return await this._collect(dbCursor);
   }
   
   /**
@@ -24,8 +24,9 @@ class MongooseModel extends Model {
    * @returns {Promise.<Object>}
    */
   async get(id) {
-    const dbObject = await this._getMongooseModel().findOne({ id });
-    return this._toClient(dbObject);
+    const dbCursor = this._getMongooseModel().find({ id }).cursor();
+    const objects = await this._collect(dbCursor);
+    return objects.length ? objects[0] : null;
   }
   
   /**
@@ -35,8 +36,8 @@ class MongooseModel extends Model {
    * @returns {Promise.<Array>}
    */
   async getBy(key, value) {
-    const dbObjects = await this._getMongooseModel().find({ [key]: value });
-    return dbObjects.map(this._toClient);
+    const dbCursor = this._getMongooseModel().find({ [key]: value }).cursor();
+    return await this._collect(dbCursor);
   }
   
   /**
@@ -56,25 +57,63 @@ class MongooseModel extends Model {
    */
   async create(data) {
     const dbObject = await this._getMongooseModel().create(data);
-    return this._toClient(dbObject);
+    return Object.assign({}, data, { id: dbObject.id });
   }
   
   /**
-   * Updates db object
+   * Updates object
+   * @param {Number} id Object id
    * @param {Object} object Object to update
-   * @returns {Promise.<Object>}
+   * @param {Boolean} isSet Sets props from `object` to object or replace full object with `object`
+   * @returns {Promise}
    */
-  async update(object) {
-    const dbObject = await this._getMongooseModel().findOneAndUpdate({ id: object.id }, object, { new: true });
-    if (!dbObject) {
-      logger.warn(`update(object) with id ${object.id}: object was NOT found by id, object was NOT updated`);
-      return object;
-    }
-    return this._toClient(dbObject);
+  async update(id, object, isSet) {
+    const dbObject = await this._getMongooseModel().findOneAndUpdate({ id }, isSet ? { $set: object } : object, { new: true });
+    if (!dbObject) logger.warn(`update(object) with id ${id}: object was NOT found by id, object was NOT updated`);
   }
   
+  /**
+   * Pipes database stream to model's transform streams
+   * @param {Stream} dbCursor
+   * @returns {Stream}
+   * @private
+   */
+  _connect(dbCursor) {
+    return this._getTransformers().reduce((stream, transformer) => stream.pipe(transformer()), dbCursor);
+  }
+  
+  /**
+   * Collects stream data
+   * @param {Stream} dbCursor
+   * @returns {Promise}
+   * @private
+   */
+  _collect(dbCursor) {
+    return new Promise((resolve, reject) => {
+      const data = [];
+      this._connect(dbCursor)
+        .on('data', obj => data.push(obj))
+        .on('error', reject)
+        .on('end', () => resolve(data));
+    });
+  }
+  
+  /**
+   * Returns Mongoose model instance
+   * @returns {Object}
+   * @private
+   */
   _getMongooseModel() {
     return this._mongooseModel;
+  }
+  
+  /**
+   * Returns model transform streams list
+   * @returns {Array}
+   * @private
+   */
+  _getTransformers() {
+    return this._transformers;
   }
   
 }

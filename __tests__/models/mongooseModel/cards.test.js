@@ -2,6 +2,7 @@ jest.mock('../../../source/models/db/card');
 
 const CardsModel = require('../../../source/models/cardsModel');
 const Card = require('../../../source/models/db/card');
+const { securify } = require('../../../libs/bankUtils');
 
 const cardsModel = new CardsModel();
 
@@ -24,7 +25,7 @@ describe('Mongoose Model (common), Mongoose Model / Cards Model', () => {
     const balance = 226264;
     const dbCard = await cardsModel.get(id);
     expect(dbCard.id).toBe(id);
-    expect(dbCard.cardNumber).toBe(cardNumber);
+    expect(dbCard.cardNumber).toBe(securify(cardNumber));
     expect(dbCard.balance).toBe(balance);
   });
   
@@ -48,7 +49,7 @@ describe('Mongoose Model (common), Mongoose Model / Cards Model', () => {
     const dbCards = await cardsModel.getBy(key, value);
     expect(dbCards).toHaveLength(1);
     expect(dbCards[0].id).toBe(id);
-    expect(dbCards[0].cardNumber).toBe(value);
+    expect(dbCards[0].cardNumber).toBe(securify(value));
     expect(dbCards[0].balance).toBe(balance);
   });
   
@@ -99,7 +100,7 @@ describe('Mongoose Model (common), Mongoose Model / Cards Model', () => {
     const balance = 120;
     const dbCard = await cardsModel.create({ cardNumber, balance });
     expect(dbCard.id).toBe(expectedId);
-    expect(dbCard.cardNumber).toBe(cardNumber);
+    expect(dbCard.cardNumber).toBe(securify(cardNumber));
     expect(dbCard.balance).toBe(balance);
     const dbCards = await cardsModel.getAll();
     const dbIds = dbCards.map(dbCard => dbCard.id).sort();
@@ -110,47 +111,35 @@ describe('Mongoose Model (common), Mongoose Model / Cards Model', () => {
   
   test('update(object) with existing object id', async () => {
     const id = 3;
-    const cardNumber = '6762300000000009';
     const balance = 777;
-    const dbCard = await cardsModel.update({ id, cardNumber, balance });
-    expect(dbCard.id).toBe(id);
-    expect(dbCard.cardNumber).toBe(cardNumber);
-    expect(dbCard.balance).toBe(balance);
+    await cardsModel.update(id, { balance }, true);
     const dbCards = await cardsModel.getAll();
     const dbIds = dbCards.map(dbCard => dbCard.id).sort();
     expect(dbCards).toHaveLength(3);
     expect(dbIds).toEqual([1, 2, 3]);
-    expect(dbCards.find(card => card.id === dbCard.id)).toEqual(dbCard);
+    expect(dbCards.find(card => card.id === id).balance).toEqual(balance);
   });
   
   test('update(object) with nonexistent but valid object id', async () => {
     const id = 5;
-    const cardNumber = '6762300000000009';
     const balance = 777;
-    const dbCard = await cardsModel.update({ id, cardNumber, balance });
-    expect(dbCard.id).toBe(id);
-    expect(dbCard.cardNumber).toBe(cardNumber);
-    expect(dbCard.balance).toBe(balance);
+    await cardsModel.update(id, { balance }, true);
     const dbCards = await cardsModel.getAll();
     const dbIds = dbCards.map(dbCard => dbCard.id).sort();
     expect(dbCards).toHaveLength(3);
     expect(dbIds).toEqual([1, 2, 3]);
-    expect(dbCards.find(card => card.id === dbCard.id)).toBeUndefined();
+    expect(dbCards.find(card => card.id === id)).toBeUndefined();
   });
   
   test('update(object) with invalid object id', async () => {
     const id = -1;
-    const cardNumber = '6762300000000009';
     const balance = 777;
-    const dbCard = await cardsModel.update({ id, cardNumber, balance });
-    expect(dbCard.id).toBe(id);
-    expect(dbCard.cardNumber).toBe(cardNumber);
-    expect(dbCard.balance).toBe(balance);
+    await cardsModel.update(id, { balance }, true);
     const dbCards = await cardsModel.getAll();
     const dbIds = dbCards.map(dbCard => dbCard.id).sort();
     expect(dbCards).toHaveLength(3);
     expect(dbIds).toEqual([1, 2, 3]);
-    expect(dbCards.find(card => card.id === dbCard.id)).toBeUndefined();
+    expect(dbCards.find(card => card.id === id)).toBeUndefined();
   });
   
 });

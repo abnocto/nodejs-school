@@ -66,6 +66,17 @@ const bankUtils = {
     }
     return formattedCardNumber.join('');
   },
+  
+  /**
+   * Hides some cardNumber digits
+   * @param {String} cardNumber card number
+   * @returns {String} securedCardNumber
+   */
+  securify(cardNumber) {
+    if (typeof cardNumber !== 'string') return cardNumber;
+    // card-info problem... return `${cardNumber.slice(0, 7)}${'*'.repeat(6)}${cardNumber.slice(13)}`;
+    return cardNumber;
+  },
 
 };
 

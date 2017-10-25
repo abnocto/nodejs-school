@@ -1,29 +1,20 @@
 const MongooseModel = require('./common/mongooseModel');
 const Transaction = require('./db/transaction');
+const transactionClientTransformer = require('./transform/transactionClientTransform');
 const AppError = require('../../libs/appError');
-
-const toClient = (obj) => {
-  if (!obj) return null;
-  return {
-    id: obj.id,
-    cardId: obj.cardId,
-    type: obj.type,
-    data: obj.data,
-    time: obj.time,
-    sum: obj.sum,
-  };
-};
 
 class TransactionsModel extends MongooseModel {
   constructor() {
-    super(Transaction, toClient);
+    super(Transaction, [transactionClientTransformer]);
   }
   
   /**
    * Transaction updating is forbidden
-   * @param {Object} object Transaction
+   * @param {Number} id Object id
+   * @param {Object} object Object to update
+   * @param {Boolean} isSet Sets props from `object` to object or replace full object with `object`
    */
-  async update(object) {
+  async update(id, object, isSet) {
     throw new AppError(403, 'Forbidden: Transaction updating is forbidden');
   }
 

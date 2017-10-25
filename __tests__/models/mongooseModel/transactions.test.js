@@ -6,6 +6,7 @@ const TransactionsModel = require('../../../source/models/transactionsModel');
 const Card = require('../../../source/models/db/card');
 const Transaction = require('../../../source/models/db/transaction');
 const AppError = require('../../../libs/appError');
+const { securify } = require('../../../libs/bankUtils');
 
 const cardsModel = new CardsModel();
 const transactionsModel = new TransactionsModel();
@@ -32,7 +33,7 @@ describe('Mongoose Model / Transactions Model', () => {
     expect(dbTransaction.sum).toBe(2345);
     const dbCard = await cardsModel.get(dbTransaction.cardId);
     expect(dbCard.id).toBe(dbTransaction.cardId);
-    expect(dbCard.cardNumber).toBe('4058700000000008');
+    expect(dbCard.cardNumber).toBe(securify('4058700000000008'));
     expect(dbCard.balance).toBe(700);
   });
   
@@ -40,7 +41,7 @@ describe('Mongoose Model / Transactions Model', () => {
     const id = 1;
     const dbCard = await cardsModel.get(id);
     expect(dbCard.id).toBe(id);
-    expect(dbCard.cardNumber).toBe('4058700000000008');
+    expect(dbCard.cardNumber).toBe(securify('4058700000000008'));
     expect(dbCard.balance).toBe(700);
     const dbTransactions = await transactionsModel.getBy('cardId', dbCard.id);
     const dbIds = dbTransactions.map(dbTransaction => dbTransaction.id).sort();

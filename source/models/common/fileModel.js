@@ -72,14 +72,16 @@ class FileModel extends Model {
   
   /**
    * Updates object
+   * @param {Number} id Object id
    * @param {Object} object Object to update
-   * @returns {Promise.<Object>}
+   * @param {Boolean} isSet Sets props from `object` to object or replace full object with `object`
+   * @returns {Promise}
    */
-  async update(object) {
+  async update(id, object, isSet) {
     const objects = await this._readFile();
-    const objectIndex = objects.findIndex(_object => _object.id === object.id);
+    const objectIndex = objects.findIndex(_object => _object.id === id);
     if (objectIndex !== -1) {
-      objects.splice(objectIndex, 1, object);
+      objects.splice(objectIndex, 1, Object.assign({}, isSet ? objects[objectIndex] : {}, object));
       await this._writeFile();
     }
     return object;

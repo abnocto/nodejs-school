@@ -22,8 +22,8 @@ class CardsModel {
     return Promise.resolve(data);
   }
   
-  async update(data) {
-    return Promise.resolve(data);
+  async update(id, object, isSet) {
+    return Promise.resolve();
   }
   
   async remove(id) {

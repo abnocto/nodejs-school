@@ -29,10 +29,12 @@ class Model {
   
   /**
    * Updates object
+   * @param {Number} id Object id
    * @param {Object} object Object to update
+   * @param {Boolean} isSet Sets props from `object` to object or replace full object with `object`
    * @returns {Promise}
    */
-  async update(object) {}
+  async update(id, object, isSet) {}
   
   /**
    * Removes object by id

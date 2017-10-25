@@ -72,7 +72,7 @@ class CardsService extends Service {
     }
   
     card.balance += transactionSum;
-    await this._getModel().update(card);
+    await this._getModel().update(card.id, { balance: card.balance }, true);
   
     const transactionData = {
       cardId: card.id,
@@ -107,25 +107,25 @@ class CardsService extends Service {
       throw new AppError(400, 'Bad request: Transfer operation data is invalid');
     }
   
-    const cardSenderData = await this._getModel().get(id);
-    if (!cardSenderData) {
+    const cardSender = await this._getModel().get(id);
+    if (!cardSender) {
       throw new AppError(404, `Not found: Card (sender) wasn't found by id ${id}`);
     }
   
-    const cardReceiverData = await this._getModel().get(data.receiverCardId);
-    if (!cardReceiverData) {
+    const cardReceiver = await this._getModel().get(data.receiverCardId);
+    if (!cardReceiver) {
       throw new AppError(404, `Not found: Card (receiver) wasn't found by id ${data.receiverCardId}`);
     }
   
-    if (cardSenderData.balance < data.sum) {
+    if (cardSender.balance < data.sum) {
       throw new AppError(403, 'Forbidden: Card (sender) balance is less than payment amount');
     }
   
-    cardSenderData.balance -= data.sum;
-    const cardSender = await this._getModel().update(cardSenderData);
+    cardSender.balance -= data.sum;
+    await this._getModel().update(cardSender.id, { balance: cardSender.balance }, true);
   
-    cardReceiverData.balance += data.sum;
-    const cardReceiver = await this._getModel().update(cardReceiverData);
+    cardReceiver.balance += data.sum;
+    await this._getModel().update(cardReceiver.id, { balance: cardReceiver.balance }, true);
   
     const transactionForSenderData = {
       cardId: cardSender.id,
