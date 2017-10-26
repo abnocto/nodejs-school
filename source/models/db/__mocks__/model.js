@@ -33,6 +33,11 @@ module.exports = class Model {
     return stream;
   }
   
+  findOne(selector) {
+    const data = this._getData(selector);
+    return data.length ? data[0] : null;
+  }
+  
   findOneAndRemove(selector) {
     const obj = this._getData(selector)[0];
     if (!obj) return;

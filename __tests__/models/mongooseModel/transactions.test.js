@@ -59,4 +59,56 @@ describe('Mongoose Model / Transactions Model', () => {
     return expect(transactionsModel.update()).rejects.toEqual(err);
   });
   
+  test('create(data) with (mobile) data string field', async () => {
+    const transaction = {
+      cardId: 1,
+      type: 'paymentMobile',
+      data: '+7(123)456-78-90',
+      time: '2017-10-04T05:28:31+03:00',
+      sum: 1000,
+    };
+    const expected = Object.assign({}, transaction, { id: 3 });
+    const dbTransaction = await transactionsModel.create(transaction);
+    expect(dbTransaction).toEqual(expected);
+    const dbTransactions = await transactionsModel.getBy('cardId', transaction.cardId);
+    const dbIds = dbTransactions.map(dbTransaction => dbTransaction.id).sort();
+    expect(dbTransactions).toHaveLength(3);
+    expect(dbIds).toEqual([1, 2, 3]);
+  });
+  
+  test('create(data) with (card) data string field', async () => {
+    const transaction = {
+      cardId: 1,
+      type: 'card2Card',
+      data: '1234567891234567',
+      time: '2017-10-04T05:28:31+03:00',
+      sum: 1000,
+    };
+    const expected = Object.assign({}, transaction, { id: 3, data: securify(transaction.data) });
+    const dbTransaction = await transactionsModel.create(transaction);
+    expect(dbTransaction).toEqual(expected);
+    const dbTransactions = await transactionsModel.getBy('cardId', transaction.cardId);
+    const dbIds = dbTransactions.map(dbTransaction => dbTransaction.id).sort();
+    expect(dbTransactions).toHaveLength(3);
+    expect(dbIds).toEqual([1, 2, 3]);
+  });
+  
+  test('create(data) with (card) data cardId number field', async () => {
+    const transaction = {
+      cardId: 1,
+      type: 'card2Card',
+      data: { cardId: 2 },
+      time: '2017-10-04T05:28:31+03:00',
+      sum: 1000,
+    };
+    const card = await cardsModel.get(2);
+    const expected = Object.assign({}, transaction, { id: 3, data: securify(card.cardNumber) });
+    const dbTransaction = await transactionsModel.create(transaction);
+    expect(dbTransaction).toEqual(expected);
+    const dbTransactions = await transactionsModel.getBy('cardId', transaction.cardId);
+    const dbIds = dbTransactions.map(dbTransaction => dbTransaction.id).sort();
+    expect(dbTransactions).toHaveLength(3);
+    expect(dbIds).toEqual([1, 2, 3]);
+  });
+  
 });

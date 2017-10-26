@@ -5,22 +5,10 @@ const transactionSecureTransformer = require('./transform/transactionSecureTrans
 const transactionHistoryTransformer = require('./transform/transactionHistoryTransform');
 const transactionCSVTransformer = require('./transform/transactionCSVTransform');
 const AppError = require('../../libs/appError');
-const { securify } = require('../../libs/bankUtils');
 
 class TransactionsModel extends MongooseModel {
   constructor() {
     super(Transaction, [transactionClientTransformer, transactionSecureTransformer]);
-  }
-  
-  /**
-   * Creates new db transaction by data
-   * @param {Object} data Data to create object with
-   * @returns {Promise.<Object>}
-   */
-  async create(data) {
-    const transaction = await super.create(data);
-    const dbTransaction = await Transaction.findOne({ id: transaction.id });
-    return Object.assign({}, transaction, { data: securify(dbTransaction.data) });
   }
   
   /**

@@ -1,6 +1,35 @@
 const Model = require('./model');
+const Card = require('./card');
 
-module.exports = new Model([
+class TransactionModel extends Model {
+  
+  create(data) {
+    let transactionData = data.data;
+    
+    if (typeof transactionData === 'object' && transactionData.cardId) {
+      const dataCard = Card.findOne({ id: transactionData.cardId });
+      if (dataCard) {
+        transactionData = dataCard.cardNumber;
+      } else {
+        transactionData = String(this.data.cardId);
+      }
+    }
+    
+    const obj = Object.assign(
+      {},
+      data,
+      {
+        id: Math.max(...this._objects.map(obj => obj.id), 0) + 1,
+        data: transactionData,
+      },
+    );
+    this._objects.push(obj);
+    return obj;
+  }
+  
+}
+
+module.exports = new TransactionModel([
   {
     id: 1,
     cardId: 1,

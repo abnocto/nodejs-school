@@ -57,7 +57,7 @@ class MongooseModel extends Model {
    */
   async create(data) {
     const dbObject = await this._getMongooseModel().create(data);
-    return Object.assign({}, data, { id: dbObject.id });
+    return this.get(dbObject.id);
   }
   
   /**
