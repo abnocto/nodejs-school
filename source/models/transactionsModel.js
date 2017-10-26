@@ -49,12 +49,7 @@ class TransactionsModel extends MongooseModel {
   getHistoryStream(cardId) {
     const now = new Date();
     const dayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const dayStartUTC = new Date(dayStart.getTime() + dayStart.getTimezoneOffset() * 60 * 1000);
-    const year = dayStartUTC.getFullYear();
-    const month = String(dayStartUTC.getMonth() + 1).padStart(2, '0');
-    const day = String(dayStartUTC.getDate()).padStart(2, '0');
-    const hours = String(dayStartUTC.getHours());
-    const dbCursor = Transaction.find({ cardId, time: { $gte: `${year}-${month}-${day}T${hours}:00:00.000Z` } }).cursor();
+    const dbCursor = Transaction.find({ cardId, time: { $gte: dayStart.toISOString() } }).cursor();
     const historyTransformers = [transactionHistoryTransformer, transactionSecureTransformer, transactionCSVTransformer];
     return historyTransformers.reduce((stream, transformer) => stream.pipe(transformer()), dbCursor);
   }
